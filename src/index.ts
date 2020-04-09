@@ -10,7 +10,7 @@ const { env } = process;
 const program = pipe(
     buildConfiguration(env),
     map((configuration) => ({
-        options: buildOptions(configuration.RDB_HOST, 3306),
+        options: buildOptions(configuration.RDB_HOST, configuration.RDB_PORT),
         configuration,
     })),
     mapLeft(String),

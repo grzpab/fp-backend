@@ -1,5 +1,5 @@
 import { Options, Sequelize } from 'sequelize';
-import { TaskEither, tryCatch } from 'fp-ts/lib/TaskEither';
+import { tryCatch } from 'fp-ts/lib/TaskEither';
 
 export const buildSequelizeInstance = (
     RDB_DATABASE: string,
@@ -23,12 +23,12 @@ export const buildSequelizeInstance = (
 
 const buildCheckConnection = (sequelize: Sequelize): TaskEither<string, void> => tryCatch(
     async (): Promise<void> => {
-        sequelize.query('SELECT 1')
+        await sequelize.query('SELECT 1')
     },
     () => 'Could not connect to the database anymore.'
 );
 
-export const buildDataAccessLayer = (sequelize: Sequelize) => {
+export const buildDataAccessLayer = (sequelize: Sequelize): TaskEither<string, R1NG.DataAccessLayer> => {
     return tryCatch(
         async () => {
             await sequelize.sync();
