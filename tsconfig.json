@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "commonjs",
+        "outDir": "build",
+        "sourceMap": false,
+        "allowJs": true,
+        "moduleResolution": "node",
+        "rootDir": "src",
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noUnusedLocals": true,
+        "alwaysStrict": true,
+        "lib": [
+            "es2020",
+        ],
+        "baseUrl": ".",
+        "typeRoots": [
+            "./types",
+            "./node_modules/@types/node"
+        ]
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "./node_modules"
+    ]
+}
