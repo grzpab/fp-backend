@@ -8,5 +8,5 @@ export const buildOptions = (RDB_HOST: string, RDB_PORT: number): Options => ({
         min: 0,
         max: 10,
     },
-    logging: true,
+    logging: false,
 });

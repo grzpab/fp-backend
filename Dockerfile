@@ -11,3 +11,4 @@ RUN yarn
 
 COPY tsconfig.json /opt/r1ng/tsconfig.json
 COPY src /opt/r1ng/src
+COPY types /opt/r1ng/types

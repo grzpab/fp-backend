@@ -5,7 +5,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: yarn start
+        command: yarn watch
         environment:
             RDB_HOST: "r1ng-database"
             RDB_PORT: "3306"
@@ -25,7 +25,7 @@ services:
         image: mysql:8.0.19
         restart: unless-stopped
         environment:
-            MYSQL_ROOT_PASSWORD: 'password'
+            MYSQL_ROOT_PASSWORD: "password"
             MYSQL_DATABASE: 'r1ng'
         ports:
             - "24002:3306"

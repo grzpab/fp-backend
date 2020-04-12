@@ -17,7 +17,7 @@ export const buildSequelizeInstance = (
     await sequelize.authenticate();
 
     return sequelize;
-}, () => "Could not authenticate a Sequelize instance.");
+}, (err) => `$Could not authenticate a Sequelize instance: ${String(err)}.`);
 
 const buildCheckConnection = (sequelize: Sequelize): TaskEither<string, void> => tryCatch(
     async (): Promise<void> => {
