@@ -1,6 +1,6 @@
-import type { Either } from 'fp-ts/lib/Either';
-import * as t from 'io-ts';
-import { IntFromString } from 'io-ts-types/lib/IntFromString';
+import type { Either } from "fp-ts/lib/Either";
+import * as t from "io-ts";
+import { IntFromString } from "io-ts-types/lib/IntFromString";
 
 const configurationCodec = t.readonly(t.exact(t.type({
     RDB_HOST: t.string,
@@ -10,7 +10,7 @@ const configurationCodec = t.readonly(t.exact(t.type({
     RDB_DATABASE: t.string,
 })));
 
-namespace R1NG {
+export namespace R1NG {
     export type Configuration = t.TypeOf<typeof configurationCodec>;
 }
 

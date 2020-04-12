@@ -1,5 +1,5 @@
-import { Options, Sequelize } from 'sequelize';
-import { tryCatch } from 'fp-ts/lib/TaskEither';
+import { Options, Sequelize } from "sequelize";
+import { tryCatch } from "fp-ts/lib/TaskEither";
 
 export const buildSequelizeInstance = (
     RDB_DATABASE: string,
@@ -18,14 +18,14 @@ export const buildSequelizeInstance = (
         await sequelize.authenticate();
     
         return sequelize;
-    }, () => 'Could not authenticate a Sequelize instance.');
-}
+    }, () => "Could not authenticate a Sequelize instance.");
+};
 
 const buildCheckConnection = (sequelize: Sequelize): TaskEither<string, void> => tryCatch(
     async (): Promise<void> => {
-        await sequelize.query('SELECT 1')
+        await sequelize.query("SELECT 1");
     },
-    () => 'Could not connect to the database anymore.'
+    () => "Could not connect to the database anymore."
 );
 
 export const buildDataAccessLayer = (sequelize: Sequelize): TaskEither<string, R1NG.DataAccessLayer> => {
@@ -37,6 +37,6 @@ export const buildDataAccessLayer = (sequelize: Sequelize): TaskEither<string, R
                 checkConnection: buildCheckConnection(sequelize),
             };
         },
-        () => 'Could not build a DataAccessLayer instance',
-    )
+        () => "Could not build a DataAccessLayer instance",
+    );
 };
