@@ -14,7 +14,8 @@
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": "tsconfig.json"
     },
     "plugins": [
         "@typescript-eslint"
@@ -62,6 +63,7 @@
         "no-throw-literal": "error",
         "no-unmodified-loop-condition": "error",
         "no-unused-expressions": "off", // overloaded by eslint-typescript
+        "no-unused-vars": "off",
         "no-useless-call": "error",
         "no-useless-concat": "warn",
         "no-useless-return": "error",
@@ -114,16 +116,13 @@
         "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
         "@typescript-eslint/no-unnecessary-condition": "error",
         "@typescript-eslint/no-unnecessary-qualifier": "error",
-        "@typescript-eslint/no-unsafe-assignment": "warn",
         "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-unsafe-member-access": "warn",
         "@typescript-eslint/no-unsafe-return": "warn",
-        "@typescript-eslint/no-unused-vars-experimental": "warn",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-nullish-coalescing": "error",
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/prefer-readonly": "error",
-        "@typescript-eslint/prefer-readonly-parameter-types": "error",
         "@typescript-eslint/promise-function-async": "error",
         "@typescript-eslint/require-array-sort-compare": "error",
         "@typescript-eslint/restrict-plus-operands": "error",
