@@ -20,31 +20,20 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "indent": [
-            "warn",
-            4
-        ],
-        "linebreak-style": [
-            "warn",
-            "unix"
-        ],
-        "quotes": [
-            "warn",
-            "double"
-        ],
-        "semi": [
-            "warn",
-            "always"
-        ],
+        "indent": "off", // overloaded by eslint-typescript
+        "linebreak-style": ["warn", "unix"],
+        "quotes": "off", // overloaded by eslint-typescript
+        "semi": "off",
         "array-callback-return": "error",
         "block-scoped-var": "error",
         "class-methods-use-this": "error",
         "consistent-return": "error",
         "default-case": "error",
-        "default-param-last": "error",
+        "default-param-last": "off", // overloaded by eslint-typescript
         "eqeqeq": "error",
         "no-caller": "error",
         "no-constructor-return": "error",
+        "no-dupe-class-members": "off",
         "no-empty-function": "error",
         "no-eq-null": "error",
         "no-eval":"error",
@@ -59,6 +48,49 @@
         "no-labels": "error",
         "no-lone-blocks": "error",
         "no-loop-func": "error",
+        "no-new": "error",
+        "no-new-func": "error",
+        "no-new-wrappers": "error",
+        "no-octal-escape": "error",
+        "no-param-reassign": "error",
+        "no-proto": "error",
+        "no-return-assign": "error",
+        "no-return-await": "error",
+        "no-script-url": "error",
+        "no-self-compare": "error",
+        "no-sequences": "error",
+        "no-throw-literal": "error",
+        "no-unmodified-loop-condition": "error",
+        "no-unused-expressions": "off", // overloaded by eslint-typescript
+        "no-useless-call": "error",
+        "no-useless-concat": "warn",
+        "no-useless-return": "error",
+        "no-void": "error",
+        "prefer-regex-literals": "error",
+        "radix": "error",
+        "require-unicode-regexp": "warn",
+        "no-shadow": "error",
+        "no-use-before-define": "error",
+        "callback-return": "warn",
+        "handle-callback-err": "warn",
+        "no-buffer-constructor": "error",
+        "no-path-concat": "error",
+        "no-process-exit": "warn",
+        "no-sync": "warn",
+        "no-confusing-arrow": "error",
+        "no-duplicate-imports": "error",
+        "no-useless-computed-key": "error",
+        "no-useless-constructor": "off", // overloaded by eslint-typescript
+        "no-useless-rename": "error",
+        "no-var": "error",
+        "object-shorthand": "error",
+        "prefer-arrow-callback": "error",
+        "prefer-const": "error",
+        "prefer-numeric-literals": "warn",
+        "prefer-rest-params": "error",
+        "prefer-spread": "error",
+        "prefer-template": "error",
+        "require-yield": "error",
         // TODO finish
         "@typescript-eslint/array-type": [
             "error",
@@ -98,6 +130,15 @@
         "@typescript-eslint/restrict-template-expressions": "error",
         "@typescript-eslint/strict-boolean-expressions": "error",
         "@typescript-eslint/switch-exhaustiveness-check": "warn",
-        "@typescript-eslint/unified-signatures": "error"
+        "@typescript-eslint/unified-signatures": "error",
+        // overrides
+        "@typescript-eslint/default-param-last": "error",
+        "@typescript-eslint/indent": ["warn", 4],
+        "@typescript-eslint/no-dupe-class-members": "error",
+        "@typescript-eslint/no-unused-expressions": "error",
+        "@typescript-eslint/no-useless-constructor": "error",
+        "@typescript-eslint/quotes": ["warn", "double"],
+        "@typescript-eslint/semi": ["warn", "always"],
+        "@typescript-eslint/return-await": "error"
     }
 }
