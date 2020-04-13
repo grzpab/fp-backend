@@ -1,6 +1,7 @@
 import * as restify from "restify";
+import { Task } from "fp-ts/lib/Task";
 
-export const buildServer = (name: string) => (dal: R1NG.DataAccessLayer) : restify.Server => {
+export const buildServer = (name: string) => (healthCheckController: Task<number>) : restify.Server => {
     const server = restify.createServer({ name });
 
     server.use(( _, res, next ) => {
@@ -17,6 +18,12 @@ export const buildServer = (name: string) => (dal: R1NG.DataAccessLayer) : resti
     server.on("uncaughtException", (_, res) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         res.send(500);
+    });
+
+    server.get("/", async (_, res) => {
+        const status = await healthCheckController();
+        
+        res.send(status);
     });
 
     return server;

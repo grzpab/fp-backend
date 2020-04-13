@@ -4,8 +4,9 @@ import { fromEither, chain, map as mapTE } from "fp-ts/lib/TaskEither";
 import { buildConfiguration } from "./effects/buildConfig";
 import { buildSequelizeInstance, buildDataAccessLayer } from "./sideEffects/sequelize";
 import { buildOptions } from "./effects/buildSequelizeOptions";
-import { buildServer } from "./effects/buildServer";
+import { buildServer } from "./sideEffects/buildServer";
 import { startServer } from "./sideEffects/restify";
+import { buildHealthCheckControler } from "./effects/buildHealthCheckControler";
 
 const { env } = process;
 
@@ -24,7 +25,9 @@ const program = pipe(
         options,
     )),
     chain(buildDataAccessLayer),
-    mapTE(buildServer("r1ng")),
+    mapTE((dal) => buildServer("r1ng")(
+        buildHealthCheckControler(dal.checkConnection)
+    )),
     chain(startServer(24001))
 );
 
