@@ -1,9 +1,11 @@
 import { pipe } from "fp-ts/lib/pipeable";
 import { map, mapLeft, fold, Either } from "fp-ts/lib/Either";
-import { fromEither, chain } from "fp-ts/lib/TaskEither";
+import { fromEither, chain, map as mapTE } from "fp-ts/lib/TaskEither";
 import { buildConfiguration } from "./effects/buildConfig";
 import { buildSequelizeInstance, buildDataAccessLayer } from "./sideEffects/sequelize";
 import { buildOptions } from "./effects/buildSequelizeOptions";
+import { buildServer } from "./effects/buildServer";
+import { startServer } from "./sideEffects/restify";
 
 const { env } = process;
 
@@ -22,13 +24,14 @@ const program = pipe(
         options,
     )),
     chain(buildDataAccessLayer),
-    chain((dal) => dal.checkConnection),
+    mapTE(buildServer("r1ng")),
+    chain(startServer(24001))
 );
 
-const programFinishedCallback = (either: Either<string, void>) => pipe(
+const programFinishedCallback = <A, B>(either: Either<A, B>) => pipe(
     either,
     fold(
-        (error) => { console.log(`Connection unsuccesful: ${error}`); },
+        (error) => { console.log(`Connection unsuccesful: ${String(error)}`); },
         () => { console.log("Connection successful"); }
     )
 );

@@ -1,0 +1,8 @@
+import * as restify from "restify";
+import { taskify } from "fp-ts/lib/TaskEither";
+
+export const startServer = (port: number) => (server: restify.Server) : TaskEither<unknown, void> =>
+    taskify<unknown, void>(callback => {
+        console.log('Listening');
+        server.listen(port, callback);
+    })();
