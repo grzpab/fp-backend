@@ -31,6 +31,7 @@ export const buildDataAccessLayer = (sequelize: Sequelize): TaskEither<string, R
         await sequelize.sync();
 
         return {
+            sequelize,
             checkConnection: buildCheckConnection(sequelize),
         };
     },

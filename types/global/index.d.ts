@@ -1,4 +1,5 @@
 import type { TaskEither as _TaskEither } from "fp-ts/lib/TaskEither";
+import type { Sequelize } from "sequelize/types";
 
 declare global {
     export type Unpromisify<T> = T extends Promise<infer R> ? R : never;
@@ -8,6 +9,7 @@ declare global {
     export namespace R1NG {
         export type DataAccessLayer = Readonly<{
             checkConnection: TaskEither<string, void>;
+            sequelize: Sequelize,
         }>;
     }
 }

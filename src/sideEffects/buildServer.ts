@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as restify from "restify";
 import { Task } from "fp-ts/lib/Task";
 
@@ -16,11 +18,10 @@ export const buildServer = (name: string) => (healthCheckController: Task<number
     server.use(restify.plugins.bodyParser());
 
     server.on("uncaughtException", (_, res) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         res.send(500);
     });
 
-    server.get("/", async (_, res) => {
+    server.get("/", async (req, res) => {
         const status = await healthCheckController();
         
         res.send(status);
