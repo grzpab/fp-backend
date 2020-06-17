@@ -1,11 +1,13 @@
+import { pipe } from "fp-ts/lib/pipeable";
 import type { Errors, Decoder } from "io-ts";
 import { Do } from "fp-ts-contrib/lib/Do";
-import { either, Either } from "fp-ts/lib/Either";
+import { either, Either, mapLeft } from "fp-ts/lib/Either";
 
-type InputsDecoders<P, Q, B> = Readonly<{
+type InputsDecoders<P, Q, B, E> = Readonly<{
     paramsCodec: Decoder<unknown, P>,
     queryCodec: Decoder<unknown, Q>,
     bodyCodec: Decoder<unknown, B>,
+    mapErrors: (errors: Errors) => E, 
 }>;
 
 export type Inputs<P, Q, B> = Readonly<{
@@ -14,10 +16,17 @@ export type Inputs<P, Q, B> = Readonly<{
     body: B,
 }>;
 
-export const decodeInputs = <P, Q, B>({ paramsCodec, queryCodec, bodyCodec }: InputsDecoders<P, Q, B>) => (
+export const decodeInputs = <P, Q, B, E>({ paramsCodec, queryCodec, bodyCodec, mapErrors }: InputsDecoders<P, Q, B, E>) => (
     { params, query, body }: Inputs<unknown, unknown, unknown>
-): Either<Errors, Inputs<P, Q, B>> => Do(either)
-    .bind("params", paramsCodec.decode(params))
-    .bind("query", queryCodec.decode(query))
-    .bind("body", bodyCodec.decode(body))
-    .done();
+): Either<E, Inputs<P, Q, B>> => {
+    const do3 = Do(either)
+        .bind("params", paramsCodec.decode(params))
+        .bind("query", queryCodec.decode(query))
+        .bind("body", bodyCodec.decode(body))
+        .done();
+
+    return pipe(
+        do3,
+        mapLeft(mapErrors),
+    );
+};

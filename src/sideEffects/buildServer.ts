@@ -3,7 +3,9 @@
 import * as restify from "restify";
 import { Task } from "fp-ts/lib/Task";
 
-export const buildServer = (name: string) => (healthCheckController: Task<number>) : restify.Server => {
+export const buildServer = (name: string) => (
+    healthCheckController: Task<number>,
+) : restify.Server => {
     const server = restify.createServer({ name });
 
     server.use(( _, res, next ) => {

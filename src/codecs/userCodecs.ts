@@ -4,12 +4,12 @@ import { buildRetCodec, buildRepCodec } from "./sharedCodecs";
 
 // create / update / delete / 
 export const createUserCommandCodec = buildRetCodec({
-    uuid: UUID,
     username: t.string,
     password: t.string,
 });
 
 export const updateUserCommandCodec = buildRepCodec({
+    uuid: UUID,
     username: t.string,
     password: t.string,
 });

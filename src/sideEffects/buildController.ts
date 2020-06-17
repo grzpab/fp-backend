@@ -11,7 +11,7 @@ type ControlerInput = {
     getTime: () => number,
 };
 
-type ControlerDependencies<P, Q, B> = {
+export type ControlerDependencies<P, Q, B> = {
     decodedInputs: Inputs<P, Q, B>,
     dataAccessLayer: R1NG.DataAccessLayer,
     getTime: () => number,
