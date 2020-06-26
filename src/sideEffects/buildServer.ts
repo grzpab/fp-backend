@@ -2,9 +2,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as restify from "restify";
 import { Task } from "fp-ts/lib/Task";
+import { ControlerInput } from "./buildController";
+import { DataAccessLayer } from "./sequelize";
 
-export const buildServer = (name: string) => (
+export const buildServer = (
+    name: string,
+    dataAccessLayer: DataAccessLayer,
     healthCheckController: Task<number>,
+    createUserControler: (controlerInput: ControlerInput) => Task<[number, unknown]>,
 ) : restify.Server => {
     const server = restify.createServer({ name });
 
@@ -27,6 +32,22 @@ export const buildServer = (name: string) => (
         const status = await healthCheckController();
         
         res.send(status);
+    });
+
+    server.post("/users", async (req, res) => {
+        const controlerInput: ControlerInput = {
+            inputs: {
+                params: req.params,
+                query: req.query,
+                body: req.body,
+            },
+            dataAccessLayer,
+            getTime: () => Date.now(),
+        };
+
+        const [ code, data ] = await createUserControler(controlerInput)();
+
+        res.send(code, data);
     });
 
     return server;

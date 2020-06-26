@@ -25,8 +25,11 @@ const program = pipe(
         options,
     )),
     chain(buildDataAccessLayer),
-    mapTE((dal) => buildServer("r1ng")(
-        buildHealthCheckControler(dal.checkConnection),
+    mapTE((dataAccessLayer) => buildServer(
+        "r1ng",
+        dataAccessLayer,
+        buildHealthCheckControler(dataAccessLayer.checkConnection),
+        undefined as unknown as any,
     )),
     chain(startServer(24001))
 );

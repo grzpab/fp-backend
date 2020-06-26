@@ -1,5 +1,5 @@
 import { Sequelize, Transaction } from "sequelize/types";
-import { tryCatch, chain, fromEither } from "fp-ts/lib/TaskEither";
+import { tryCatch, chain, fromEither, TaskEither } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/lib/pipeable";
 
 export const buildTransaction = <E, A>(

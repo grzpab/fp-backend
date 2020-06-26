@@ -1,12 +1,12 @@
 import { pipe } from "fp-ts/lib/pipeable";
 import type { Either } from "fp-ts/lib/Either";
 import type { Inputs } from "../effects/buildInputDecoder";
-import { fromEither, chain } from "fp-ts/lib/TaskEither";
+import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
 import { Transaction } from "sequelize/types";
 import { buildTransaction } from "./buildTransaction";
 import type { DataAccessLayer } from "./sequelize";
 
-type ControlerInput = {
+export type ControlerInput = {
     inputs: Inputs<unknown, unknown, unknown>,
     dataAccessLayer: DataAccessLayer,
     getTime: () => number,

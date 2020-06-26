@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { Sequelize, Model, ModelAttributes, ModelAttributeColumnOptions, DataTypes, Transaction } from "sequelize";
-import { tryCatch } from "fp-ts/lib/TaskEither";
+import { tryCatch, TaskEither } from "fp-ts/lib/TaskEither";
 
 type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | "primaryKey">;
 

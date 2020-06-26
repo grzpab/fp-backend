@@ -1,5 +1,5 @@
 import { Options, Sequelize } from "sequelize";
-import { tryCatch } from "fp-ts/lib/TaskEither";
+import { tryCatch, TaskEither } from "fp-ts/lib/TaskEither";
 import { userRepositoryBuilder } from "../repositories/buildUserRepository";
 
 export const buildSequelizeInstance = (
