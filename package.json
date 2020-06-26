@@ -10,6 +10,7 @@
     "watch": "nodemon --exec ./node_modules/.bin/ts-node ./src/index.ts"
   },
   "dependencies": {
+    "uuid": "8.2.0",
     "typescript": "3.8.3",
     "sequelize": "5.21.6",
     "fp-ts": "2.5.3",
@@ -27,6 +28,7 @@
     "@types/bluebird": "3.5.30",
     "@types/node": "13.11.1",
     "@types/restify": "8.4.2",
+    "@types/uuid": "3.4.3",
     "@types/validator": "13.0.0",
     "eslint": "6.8.0",
     "@typescript-eslint/eslint-plugin": "2.27.0",

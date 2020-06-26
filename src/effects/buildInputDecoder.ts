@@ -16,7 +16,7 @@ export type Inputs<P, Q, B> = Readonly<{
     body: B,
 }>;
 
-export const decodeInputs = <P, Q, B, E>({ paramsCodec, queryCodec, bodyCodec, mapErrors }: InputsDecoders<P, Q, B, E>) => (
+export const curriedDecodeInputs = <P, Q, B, E>({ paramsCodec, queryCodec, bodyCodec, mapErrors }: InputsDecoders<P, Q, B, E>) => (
     { params, query, body }: Inputs<unknown, unknown, unknown>
 ): Either<E, Inputs<P, Q, B>> => {
     const do3 = Do(either)

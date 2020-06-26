@@ -17,11 +17,15 @@ export type ControlerDependencies<P, Q, B> = {
     getTime: () => number,
 };
 
-export const buildControler = <P, Q, B, E, A>(
+export type ControlerRecipe<P, Q, B, E, A> = Readonly<{
     decodeInputs: (inputs: Inputs<unknown, unknown, unknown>) => Either<E, Inputs<P, Q, B>>,
     buildError: (controlerDependencies: ControlerDependencies<P, Q, B>) => (e: unknown) => E,
     callback: (controlerDependencies: ControlerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<E, A>,
     isolationLevel: Transaction.ISOLATION_LEVELS,
+}>;
+
+export const buildControler = <P, Q, B, E, A>(
+    { decodeInputs, buildError, callback, isolationLevel }: ControlerRecipe<P, Q, B, E, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControlerInput,
 ): TaskEither<E, A> => pipe(

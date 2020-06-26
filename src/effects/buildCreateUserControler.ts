@@ -1,12 +1,12 @@
 import { buildControler, ControlerDependencies } from "../sideEffects/buildController";
-import { decodeInputs } from "./buildInputDecoder";
+import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec } from "src/codecs/sharedCodecs";
 import { Transaction } from "sequelize/types";
 import { createUserCommandCodec, CreateUserCommand } from "src/codecs/userCodecs";
 
 const emptyCodec = buildRetCodec({});
 
-const decodeInputsPartial = decodeInputs({
+const decodeInputs = curriedDecodeInputs({
     paramsCodec: emptyCodec,
     queryCodec: emptyCodec,
     bodyCodec: createUserCommandCodec,
@@ -21,9 +21,9 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, 
     return dataAccessLayer.createUser(transaction, username, password);
 };
 
-export const buildCreateUserControler = buildControler(
-    decodeInputsPartial,
+export const buildCreateUserControler = buildControler({
+    decodeInputs,
     buildError,
     callback,
-    Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-);
+    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+});

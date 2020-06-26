@@ -33,6 +33,7 @@ export const buildDataAccessLayer = (sequelize: Sequelize): TaskEither<string, R
         return {
             sequelize,
             checkConnection: buildCheckConnection(sequelize),
+            createUser: 
         };
     },
     () => "Could not build a DataAccessLayer instance",
