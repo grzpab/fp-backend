@@ -1,19 +1,20 @@
 import { pipe } from "fp-ts/lib/pipeable";
-import { Either } from "fp-ts/lib/Either";
-import { Inputs } from "../effects/buildInputDecoder";
+import type { Either } from "fp-ts/lib/Either";
+import type { Inputs } from "../effects/buildInputDecoder";
 import { fromEither, chain } from "fp-ts/lib/TaskEither";
 import { Transaction } from "sequelize/types";
 import { buildTransaction } from "./buildTransaction";
+import type { DataAccessLayer } from "./sequelize";
 
 type ControlerInput = {
     inputs: Inputs<unknown, unknown, unknown>,
-    dataAccessLayer: R1NG.DataAccessLayer,
+    dataAccessLayer: DataAccessLayer,
     getTime: () => number,
 };
 
 export type ControlerDependencies<P, Q, B> = {
     decodedInputs: Inputs<P, Q, B>,
-    dataAccessLayer: R1NG.DataAccessLayer,
+    dataAccessLayer: DataAccessLayer,
     getTime: () => number,
 };
 

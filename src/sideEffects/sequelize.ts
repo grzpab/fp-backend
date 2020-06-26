@@ -1,5 +1,6 @@
 import { Options, Sequelize } from "sequelize";
 import { tryCatch } from "fp-ts/lib/TaskEither";
+import { userRepositoryBuilder } from "../repositories/buildUserRepository";
 
 export const buildSequelizeInstance = (
     RDB_DATABASE: string,
@@ -26,15 +27,22 @@ const buildCheckConnection = (sequelize: Sequelize): TaskEither<string, void> =>
     () => "Could not connect to the database anymore."
 );
 
-export const buildDataAccessLayer = (sequelize: Sequelize): TaskEither<string, R1NG.DataAccessLayer> => tryCatch(
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const buildDataAccessLayer = (sequelize: Sequelize) => tryCatch(
     async () => {
         await sequelize.sync();
 
         return {
             sequelize,
             checkConnection: buildCheckConnection(sequelize),
-            createUser: 
+            userRepository: userRepositoryBuilder(sequelize), 
         };
     },
     () => "Could not build a DataAccessLayer instance",
 );
+
+type DataAccessLayerTaskEither = ReturnType<typeof buildDataAccessLayer>;
+
+export type GetTaskEitherRightType<T> = T extends TaskEither<unknown, infer R> ? R : never;
+
+export type DataAccessLayer = GetTaskEitherRightType<DataAccessLayerTaskEither>;

@@ -16,9 +16,9 @@ const decodeInputs = curriedDecodeInputs({
 const buildError = () => (e: unknown) => "error";
 
 const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, {}, CreateUserCommand>) => (transaction: Transaction) => {
-    const { username, password } = decodedInputs.body;
+    const { username } = decodedInputs.body;
 
-    return dataAccessLayer.createUser(transaction, username, password);
+    return dataAccessLayer.userRepository.create(transaction, username);
 };
 
 export const buildCreateUserControler = buildControler({
