@@ -69,10 +69,21 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         () => "Could not create a user"
     );
 
+    const destroy = (transaction: Transaction, id: string): TaskEither<string, number> => tryCatch(
+        () => User.destroy({
+            where: {
+                id,
+            },
+            transaction,
+        }),
+        () => "Could not destroy a user",
+    );
+
     return {
         findOne,
         findAll,
         create,
+        destroy,
     };
 };
 

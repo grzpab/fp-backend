@@ -6,7 +6,7 @@ import { buildSequelizeInstance, buildDataAccessLayer } from "./sideEffects/sequ
 import { buildOptions } from "./effects/buildSequelizeOptions";
 import { buildServer } from "./sideEffects/buildServer";
 import { startServer } from "./sideEffects/restify";
-import { buildHealthCheckControler } from "./effects/buildHealthCheckControler";
+import { healthCheckControler } from "./effects/healthCheckControler";
 
 const { env } = process;
 
@@ -25,12 +25,11 @@ const program = pipe(
         options,
     )),
     chain(buildDataAccessLayer),
-    mapTE((dataAccessLayer) => buildServer(
-        "r1ng",
+    mapTE((dataAccessLayer) => buildServer({
+        name: "r1ng",
         dataAccessLayer,
-        buildHealthCheckControler(dataAccessLayer.checkConnection),
-        undefined as unknown as any,
-    )),
+        healthCheckControler,
+    })),
     chain(startServer(24001))
 );
 

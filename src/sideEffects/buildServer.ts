@@ -1,16 +1,42 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as restify from "restify";
-import { Task } from "fp-ts/lib/Task";
-import { ControlerInput } from "./buildController";
+import { ControlerInput, Controler } from "./buildController";
 import { DataAccessLayer } from "./sequelize";
 
-export const buildServer = (
+const buildRequestHandler = (
+    dataAccessLayer: DataAccessLayer,
+    controler: Controler,
+): restify.RequestHandler => async (req, res) => {
+    const controlerInput: ControlerInput = {
+        inputs: {
+            params: req.params,
+            query: req.query,
+            body: req.body,
+        },
+        dataAccessLayer,
+        getTime: () => Date.now(),
+    };
+
+    const [ code, data ] = await controler(controlerInput)();
+
+    res.send(code, data);
+    res.end();
+};
+
+type ServerRecipe = Readonly<{
     name: string,
     dataAccessLayer: DataAccessLayer,
-    healthCheckController: Task<number>,
-    createUserControler: (controlerInput: ControlerInput) => Task<[number, unknown]>,
-) : restify.Server => {
+    healthCheckControler?: Controler,
+    createUserControler?: Controler,
+}>;
+
+export const buildServer = ({
+    name,
+    dataAccessLayer,
+    healthCheckControler,
+    createUserControler,
+}: ServerRecipe) : restify.Server => {
     const server = restify.createServer({ name });
 
     server.use(( _, res, next ) => {
@@ -28,27 +54,13 @@ export const buildServer = (
         res.send(500);
     });
 
-    server.get("/", async (req, res) => {
-        const status = await healthCheckController();
-        
-        res.send(status);
-    });
+    if (healthCheckControler !== undefined) {
+        server.get("/", buildRequestHandler(dataAccessLayer, healthCheckControler));
+    }
 
-    server.post("/users", async (req, res) => {
-        const controlerInput: ControlerInput = {
-            inputs: {
-                params: req.params,
-                query: req.query,
-                body: req.body,
-            },
-            dataAccessLayer,
-            getTime: () => Date.now(),
-        };
-
-        const [ code, data ] = await createUserControler(controlerInput)();
-
-        res.send(code, data);
-    });
+    if (createUserControler !== undefined) {
+        server.post("/users", buildRequestHandler(dataAccessLayer, createUserControler));
+    }
 
     return server;
 };

@@ -1,8 +1,8 @@
+import { Transaction } from "sequelize/types";
 import { buildControler, ControlerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
-import { buildRetCodec } from "src/codecs/sharedCodecs";
-import { Transaction } from "sequelize/types";
-import { createUserCommandCodec, CreateUserCommand } from "src/codecs/userCodecs";
+import { buildRetCodec } from "../codecs/sharedCodecs";
+import { createUserCommandCodec, CreateUserCommand } from "../codecs/userCodecs";
 
 const emptyCodec = buildRetCodec({});
 

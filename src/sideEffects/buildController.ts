@@ -1,9 +1,10 @@
 import { pipe } from "fp-ts/lib/pipeable";
-import type { Either } from "fp-ts/lib/Either";
-import type { Inputs } from "../effects/buildInputDecoder";
+import { Either, fold } from "fp-ts/lib/Either";
+import { Task, map } from "fp-ts/lib/Task";
 import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
 import { Transaction } from "sequelize/types";
 import { buildTransaction } from "./buildTransaction";
+import type { Inputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
 
 export type ControlerInput = {
@@ -25,11 +26,15 @@ export type ControlerRecipe<P, Q, B, E, A> = Readonly<{
     isolationLevel: Transaction.ISOLATION_LEVELS,
 }>;
 
+type HttpStatusCode = 200 | 201 | 204 | 400 | 403 | 404 | 500;
+
+export type Controler = (controlerInput: ControlerInput) => Task<[HttpStatusCode, unknown]>;
+
 export const buildControler = <P, Q, B, E, A>(
     { decodeInputs, buildError, callback, isolationLevel }: ControlerRecipe<P, Q, B, E, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControlerInput,
-): TaskEither<E, A> => pipe(
+): Task<[HttpStatusCode, unknown]> => pipe(
     decodeInputs(inputs),
     fromEither,
     chain(( decodedInputs ) => buildTransaction(
@@ -37,5 +42,9 @@ export const buildControler = <P, Q, B, E, A>(
         callback({ decodedInputs, dataAccessLayer, getTime }),
         isolationLevel,
         dataAccessLayer.sequelize,
+    )),
+    map(fold(
+        (e) => [500, e] as [HttpStatusCode, unknown], 
+        (a) => [200, a] as [HttpStatusCode, unknown],
     ))
 );
