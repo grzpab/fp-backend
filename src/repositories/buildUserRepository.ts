@@ -42,6 +42,25 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         timestamps: true,
     });
 
+    const findOne = (transaction: Transaction, id: string) : TaskEither<string, User | null> => tryCatch(
+        () => User.findOne({
+            where: {
+                id,
+            },
+            transaction,
+        }),
+        () => "Could not find a user",
+    );
+
+    const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<string, ReadonlyArray<User>> => tryCatch(
+        () => User.findAll({
+            offset,
+            limit,
+            transaction
+        }),
+        () => "Could not find users",
+    );
+
     const create = (transaction: Transaction, username: string) : TaskEither<string, User> => tryCatch(
         () => User.create(
             { username },
@@ -51,6 +70,8 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
     );
 
     return {
+        findOne,
+        findAll,
         create,
     };
 };
