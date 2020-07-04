@@ -3,6 +3,11 @@ import { buildControler, ControlerDependencies } from "../sideEffects/buildContr
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec } from "src/codecs/sharedCodecs";
 import { Transaction } from "sequelize/types";
+import { pipe } from "fp-ts/lib/pipeable";
+import { chainEitherK } from "fp-ts/lib/TaskEither";
+import { usersCodec } from "src/codecs/userCodecs";
+import { mapLeft } from "fp-ts/lib/Either";
+import { failure } from "io-ts/lib/PathReporter";
 
 const queryCodec = buildRetCodec({
     offset: t.Int,
@@ -23,10 +28,18 @@ const buildError = () => (e: unknown) => "error";
 const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, Query, {}>) => (transaction: Transaction) => {
     const { offset, limit } = decodedInputs.query;
 
-    return dataAccessLayer.userRepository.findAll(transaction, offset, limit);
+    return pipe(
+        dataAccessLayer.userRepository.findAll(transaction, offset, limit),
+        chainEitherK((users) => 
+            pipe(
+                usersCodec.decode(users),
+                mapLeft((errors) => failure(errors).join(','))
+            ),
+        ),
+    );
 };
 
-export const buildCreateUserControler = buildControler({
+export const findAllUsersControler = buildControler({
     decodeInputs,
     buildError,
     callback,

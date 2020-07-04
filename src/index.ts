@@ -7,6 +7,8 @@ import { buildOptions } from "./effects/buildSequelizeOptions";
 import { buildServer } from "./sideEffects/buildServer";
 import { startServer } from "./sideEffects/restify";
 import { healthCheckControler } from "./effects/healthCheckControler";
+import { createUserControler } from "./effects/createUserControler";
+import { findAllUsersControler } from "./effects/findAllUsersControler";
 
 const { env } = process;
 
@@ -29,6 +31,8 @@ const program = pipe(
         name: "r1ng",
         dataAccessLayer,
         healthCheckControler,
+        createUserControler,
+        findAllUsersControler,
     })),
     chain(startServer(24001))
 );
