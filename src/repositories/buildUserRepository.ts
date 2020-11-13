@@ -1,6 +1,9 @@
 import { v4 } from "uuid";
 import { Sequelize, Model, ModelAttributes, ModelAttributeColumnOptions, DataTypes, Transaction } from "sequelize";
-import { tryCatch, TaskEither } from "fp-ts/lib/TaskEither";
+import { tryCatch, TaskEither, map, chainEitherKW } from "fp-ts/lib/TaskEither";
+import { pipe } from "fp-ts/function";
+import { fromNullable } from "fp-ts/lib/Option";
+import { fromOption } from "fp-ts/Either";
 
 type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | "primaryKey">;
 
@@ -42,15 +45,20 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         timestamps: true,
     });
 
-    const findOne = (transaction: Transaction, id: string) : TaskEither<string, User | null> => tryCatch(
-        async () => User.findOne({
-            where: {
-                id,
-            },
-            transaction,
-        }),
-        () => "Could not find a user",
-    );
+    const findOne = (transaction: Transaction, id: string) : TaskEither<string, User | null>  =>
+        pipe(
+            tryCatch(
+                async () => User.findOne({
+                    where: {
+                        id,
+                    },
+                    transaction,
+                }),
+                () => "Could not find a user",
+            ),
+            map(fromNullable),
+            chainEitherKW(fromOption(() => "Could not find a user")),
+        );
 
     const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<string, ReadonlyArray<User>> => tryCatch(
         async () => User.findAll({
