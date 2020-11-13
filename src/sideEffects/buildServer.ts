@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as restify from "restify";
-import { ControllerInput, Controller } from "./buildController";
-import { DataAccessLayer } from "./sequelize";
+import type { ControllerInput, Controller } from "./buildController";
+import type { DataAccessLayer } from "./sequelize";
 
 const buildRequestHandler = (
     dataAccessLayer: DataAccessLayer,
     controller: Controller,
 ): restify.RequestHandler => async (req, res) => {
-    const controllerInput: ControllerInput = {
+    const input: ControllerInput = {
         inputs: {
             params: req.params,
             query: req.query,
@@ -18,7 +18,7 @@ const buildRequestHandler = (
         getTime: () => Date.now(),
     };
 
-    const [ code, data ] = await controller(controllerInput)();
+    const [ code, data ] = await controller(input)();
 
     res.send(code, data);
     res.end();

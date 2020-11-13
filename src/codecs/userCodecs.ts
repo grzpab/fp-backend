@@ -2,7 +2,6 @@ import * as t from "io-ts";
 import { UUID } from "io-ts-types/lib/UUID";
 import { buildRetCodec, NumberFromDate } from "./sharedCodecs";
 
-// create / update / delete /
 export const createUserCommandCodec = buildRetCodec({
     username: t.string,
     password: t.string,

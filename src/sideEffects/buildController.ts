@@ -1,8 +1,8 @@
+import type { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { Either, fold } from "fp-ts/lib/Either";
 import { Task, map } from "fp-ts/lib/Task";
 import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
-import { Transaction } from "sequelize/types";
 import { buildTransaction } from "./buildTransaction";
 import type { Inputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
