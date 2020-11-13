@@ -26,7 +26,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<Par
     return dataAccessLayer.userRepository.destroy(transaction, id);
 };
 
-export const updateUserController = buildController({
+export const deleteUserController = buildController({
     decodeInputs,
     buildError,
     callback,

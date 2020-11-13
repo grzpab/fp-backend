@@ -10,6 +10,7 @@ import { healthCheckController } from "./effects/healthCheckController";
 import { createUserController } from "./effects/createUserController";
 import { findAllUsersController } from "./effects/findAllUsersController";
 import { updateUserController } from "./effects/updateUserController";
+import { deleteUserController } from "./effects/deleteUserController";
 
 const { env } = process;
 
@@ -34,6 +35,7 @@ const program = pipe(
         healthCheckController,
         createUserController,
         updateUserController,
+        deleteUserController,
         findAllUsersController,
     })),
     chain(startServer(24001))
