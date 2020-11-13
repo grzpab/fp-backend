@@ -85,6 +85,7 @@
         "no-useless-constructor": "off", // overloaded by eslint-typescript
         "no-useless-rename": "error",
         "no-var": "error",
+        "object-curly-spacing": ["error", "always"],
         "object-shorthand": "error",
         "prefer-arrow-callback": "error",
         "prefer-const": "error",
