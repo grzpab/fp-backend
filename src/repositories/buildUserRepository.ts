@@ -43,7 +43,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
     });
 
     const findOne = (transaction: Transaction, id: string) : TaskEither<string, User | null> => tryCatch(
-        () => User.findOne({
+        async () => User.findOne({
             where: {
                 id,
             },
@@ -53,7 +53,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
     );
 
     const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<string, ReadonlyArray<User>> => tryCatch(
-        () => User.findAll({
+        async () => User.findAll({
             offset,
             limit,
             transaction
@@ -62,7 +62,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
     );
 
     const create = (transaction: Transaction, username: string) : TaskEither<string, User> => tryCatch(
-        () => User.create(
+        async () => User.create(
             { username },
             { transaction },
         ),
@@ -70,7 +70,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
     );
 
     const destroy = (transaction: Transaction, id: string): TaskEither<string, number> => tryCatch(
-        () => User.destroy({
+        async () => User.destroy({
             where: {
                 id,
             },

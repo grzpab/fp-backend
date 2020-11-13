@@ -5,8 +5,8 @@ import { buildRetCodec } from "../codecs/sharedCodecs";
 import { createUserCommandCodec, CreateUserCommand, userCodec } from "../codecs/userCodecs";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
-import { mapLeft } from 'fp-ts/lib/Either'
-import { failure } from 'io-ts/lib/PathReporter';
+import { mapLeft } from "fp-ts/lib/Either";
+import { failure } from "io-ts/lib/PathReporter";
 
 const emptyCodec = buildRetCodec({});
 
@@ -24,10 +24,10 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, 
 
     return pipe(
         dataAccessLayer.userRepository.create(transaction, username),
-        chainEitherK((user) => 
+        chainEitherK((user) =>
             pipe(
                 userCodec.decode(user),
-                mapLeft((errors) => failure(errors).join(','))
+                mapLeft((errors) => failure(errors).join(","))
             ),
         ),
     );

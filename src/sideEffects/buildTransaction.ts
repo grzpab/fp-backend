@@ -9,7 +9,7 @@ export const buildTransaction = <E, A>(
     sequelize: Sequelize,
 ): TaskEither<E, A> => pipe(
     tryCatch(
-        () => sequelize.transaction(
+        async () => sequelize.transaction(
             { isolationLevel },
             async (transaction) => callback(transaction)(),
         ),
