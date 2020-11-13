@@ -3,7 +3,7 @@ import { Sequelize, Model, ModelAttributes, ModelAttributeColumnOptions, DataTyp
 import { tryCatch, TaskEither, map, chainEitherKW } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/function";
 import { fromNullable } from "fp-ts/lib/Option";
-import { fromOption } from "fp-ts/Either";
+import { fromOption, left, right } from "fp-ts/Either";
 
 type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | "primaryKey">;
 
@@ -92,14 +92,20 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         () => "Could not create a user"
     );
 
-    const destroy = (transaction: Transaction, id: string): TaskEither<string, number> => tryCatch(
-        async () => User.destroy({
-            where: {
-                id,
-            },
-            transaction,
-        }),
-        () => "Could not destroy a user",
+    const destroy = (transaction: Transaction, id: string): TaskEither<string, void>  => pipe(
+        tryCatch(
+            async () => User.destroy({
+                where: {
+                    id,
+                },
+                transaction,
+            }),
+            () => "Could not destroy a user",
+        ),
+        chainEitherKW((numberOfDestroyedRows) => (numberOfDestroyedRows === 1 ?
+            left(`Deleted ${numberOfDestroyedRows} rows`) :
+            right(undefined)),
+        )
     );
 
     return {
