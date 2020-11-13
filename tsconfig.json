@@ -19,10 +19,7 @@
         "lib": [
             "es2020"
         ],
-        "baseUrl": ".",
-        "typeRoots": [
-            "./node_modules/@types/node"
-        ]
+        "baseUrl": "."
     },
     "include": [
         "src/**/*.ts"
