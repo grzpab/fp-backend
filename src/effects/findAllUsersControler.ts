@@ -33,7 +33,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, 
         chainEitherK((users) => 
             pipe(
                 usersCodec.decode(users),
-                mapLeft((errors) => failure(errors).join(','))
+                mapLeft((errors) => failure(errors).join(","))
             ),
         ),
     );
