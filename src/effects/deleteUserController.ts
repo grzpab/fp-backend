@@ -3,7 +3,7 @@ import { Transaction } from "sequelize/types";
 import { UUID } from "io-ts-types/UUID";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
-import { buildRetCodec, emptyCodec } from "../codecs/sharedCodecs";
+import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 
 const paramsCodec = buildRetCodec({
     id: UUID,
@@ -13,7 +13,7 @@ const decodeInputs = curriedDecodeInputs({
     paramsCodec,
     queryCodec: emptyCodec,
     bodyCodec: emptyCodec,
-    mapErrors: () => "error",
+    mapErrors,
 });
 
 const buildError = () => (e: unknown) => "error";

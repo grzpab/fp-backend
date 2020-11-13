@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 import { date } from "io-ts-types/lib/date";
 import { either } from "fp-ts/lib/Either";
+import { failure } from "io-ts/PathReporter";
 
 export const buildRetCodec = <T extends t.Props>(props: T): t.ReadonlyC<t.ExactC<t.TypeC<T>>> =>
     t.readonly(t.exact(t.type(props)));
@@ -19,3 +20,5 @@ export const NumberFromDate = new t.Type(
     ),
     Date,
 );
+
+export const mapErrors = (errors: t.Errors): string => failure(errors).join(",");

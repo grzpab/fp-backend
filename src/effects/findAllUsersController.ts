@@ -1,13 +1,12 @@
 import * as t from "io-ts";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
-import { buildRetCodec, emptyCodec } from "src/codecs/sharedCodecs";
+import { buildRetCodec, emptyCodec, mapErrors } from "src/codecs/sharedCodecs";
 import { Transaction } from "sequelize/types";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { usersCodec } from "src/codecs/userCodecs";
 import { mapLeft } from "fp-ts/lib/Either";
-import { failure } from "io-ts/lib/PathReporter";
 
 const queryCodec = buildRetCodec({
     offset: t.Int,
@@ -20,7 +19,7 @@ const decodeInputs = curriedDecodeInputs({
     paramsCodec: emptyCodec,
     queryCodec,
     bodyCodec: emptyCodec,
-    mapErrors: () => "error",
+    mapErrors,
 });
 
 const buildError = () => (e: unknown) => "error";
@@ -33,7 +32,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{},
         chainEitherK((users) =>
             pipe(
                 usersCodec.decode(users),
-                mapLeft((errors) => failure(errors).join(","))
+                mapLeft(mapErrors),
             ),
         ),
     );
