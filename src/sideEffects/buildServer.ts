@@ -29,6 +29,7 @@ type ServerRecipe = Readonly<{
     dataAccessLayer: DataAccessLayer,
     healthCheckController?: Controller,
     createUserController?: Controller,
+    updateUserController?: Controller,
     findAllUsersController?: Controller,
 }>;
 
@@ -37,6 +38,7 @@ export const buildServer = ({
     dataAccessLayer,
     healthCheckController,
     createUserController,
+    updateUserController,
     findAllUsersController,
 }: ServerRecipe) : restify.Server => {
     const server = restify.createServer({ name });
@@ -62,6 +64,10 @@ export const buildServer = ({
 
     if (createUserController !== undefined) {
         server.post("/users", buildRequestHandler(dataAccessLayer, createUserController));
+    }
+
+    if (updateUserController !== undefined) {
+        server.put("/users/{id}", buildRequestHandler(dataAccessLayer, updateUserController));
     }
 
     if (findAllUsersController !== undefined) {

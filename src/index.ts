@@ -30,9 +30,9 @@ const program = pipe(
     mapTE((dataAccessLayer) => buildServer({
         name: "r1ng",
         dataAccessLayer,
-        healthCheckController: healthCheckController,
-        createUserController: createUserController,
-        findAllUsersController: findAllUsersController,
+        healthCheckController,
+        createUserController,
+        findAllUsersController,
     })),
     chain(startServer(24001))
 );
