@@ -2,12 +2,11 @@ import type { TypeOf } from "io-ts";
 import { Transaction } from "sequelize/types";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chain, chainEitherK } from "fp-ts/lib/TaskEither";
-import { mapLeft } from "fp-ts/lib/Either";
 import { UUID } from "io-ts-types/UUID";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
-import { userCodec, updateUserCommandCodec, UpdateUserCommand } from "../codecs/userCodecs";
+import { updateUserCommandCodec, UpdateUserCommand, encodeUser } from "../codecs/userCodecs";
 import { buildError } from "../utilities/buildError";
 
 const paramsCodec = buildRetCodec({
@@ -30,12 +29,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<Par
     return pipe(
         dataAccessLayer.userRepository.update(transaction, id, username),
         chain(() => dataAccessLayer.userRepository.findOne(transaction, id)),
-        chainEitherK((user) =>
-            pipe(
-                userCodec.decode(user),
-                mapLeft(mapErrors),
-            ),
-        ),
+        chainEitherK(encodeUser),
     );
 
 };

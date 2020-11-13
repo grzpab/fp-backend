@@ -45,7 +45,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         timestamps: true,
     });
 
-    const findOne = (transaction: Transaction, id: string) : TaskEither<string, User | null>  =>
+    const findOne = (transaction: Transaction, id: string) : TaskEither<string, User>  =>
         pipe(
             tryCatch(
                 async () => User.findOne({

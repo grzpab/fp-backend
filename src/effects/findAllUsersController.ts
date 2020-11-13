@@ -5,8 +5,7 @@ import { buildRetCodec, emptyCodec, mapErrors } from "src/codecs/sharedCodecs";
 import { Transaction } from "sequelize/types";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
-import { usersCodec } from "src/codecs/userCodecs";
-import { mapLeft } from "fp-ts/lib/Either";
+import { encodeUsers } from "src/codecs/userCodecs";
 import { buildError } from "../utilities/buildError";
 
 const queryCodec = buildRetCodec({
@@ -28,12 +27,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{},
 
     return pipe(
         dataAccessLayer.userRepository.findAll(transaction, offset, limit),
-        chainEitherK((users) =>
-            pipe(
-                usersCodec.decode(users),
-                mapLeft(mapErrors),
-            ),
-        ),
+        chainEitherK(encodeUsers),
     );
 };
 
