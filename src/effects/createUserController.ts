@@ -6,6 +6,7 @@ import { createUserCommandCodec, CreateUserCommand, userCodec } from "../codecs/
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { mapLeft } from "fp-ts/lib/Either";
+import { buildError } from "../utilities/buildError";
 
 const emptyCodec = buildRetCodec({});
 
@@ -15,8 +16,6 @@ const decodeInputs = curriedDecodeInputs({
     bodyCodec: createUserCommandCodec,
     mapErrors,
 });
-
-const buildError = () => (e: unknown) => "error";
 
 const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, {}, CreateUserCommand>) => (transaction: Transaction) => {
     const { username } = decodedInputs.body;

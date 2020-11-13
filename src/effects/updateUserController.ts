@@ -8,6 +8,7 @@ import { buildController, ControllerDependencies } from "../sideEffects/buildCon
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { userCodec, updateUserCommandCodec, UpdateUserCommand } from "../codecs/userCodecs";
+import { buildError } from "../utilities/buildError";
 
 const paramsCodec = buildRetCodec({
     id: UUID,
@@ -19,8 +20,6 @@ const decodeInputs = curriedDecodeInputs({
     bodyCodec: updateUserCommandCodec,
     mapErrors,
 });
-
-const buildError = () => (e: unknown) => "error";
 
 type Params = TypeOf<typeof paramsCodec>;
 

@@ -7,6 +7,7 @@ import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { usersCodec } from "src/codecs/userCodecs";
 import { mapLeft } from "fp-ts/lib/Either";
+import { buildError } from "../utilities/buildError";
 
 const queryCodec = buildRetCodec({
     offset: t.Int,
@@ -21,8 +22,6 @@ const decodeInputs = curriedDecodeInputs({
     bodyCodec: emptyCodec,
     mapErrors,
 });
-
-const buildError = () => (e: unknown) => "error";
 
 const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, Query, {}>) => (transaction: Transaction) => {
     const { offset, limit } = decodedInputs.query;
