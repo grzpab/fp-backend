@@ -6,9 +6,9 @@ import { buildSequelizeInstance, buildDataAccessLayer } from "./sideEffects/sequ
 import { buildOptions } from "./effects/buildSequelizeOptions";
 import { buildServer } from "./sideEffects/buildServer";
 import { startServer } from "./sideEffects/restify";
-import { healthCheckControler } from "./effects/healthCheckControler";
-import { createUserControler } from "./effects/createUserControler";
-import { findAllUsersControler } from "./effects/findAllUsersControler";
+import { healthCheckController } from "./effects/healthCheckController";
+import { createUserController } from "./effects/createUserController";
+import { findAllUsersController } from "./effects/findAllUsersController";
 
 const { env } = process;
 
@@ -30,9 +30,9 @@ const program = pipe(
     mapTE((dataAccessLayer) => buildServer({
         name: "r1ng",
         dataAccessLayer,
-        healthCheckControler,
-        createUserControler,
-        findAllUsersControler,
+        healthCheckController: healthCheckController,
+        createUserController: createUserController,
+        findAllUsersController: findAllUsersController,
     })),
     chain(startServer(24001))
 );

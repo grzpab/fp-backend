@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { buildControler, ControlerDependencies } from "../sideEffects/buildController";
+import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec } from "src/codecs/sharedCodecs";
 import { Transaction } from "sequelize/types";
@@ -25,12 +25,12 @@ const decodeInputs = curriedDecodeInputs({
 
 const buildError = () => (e: unknown) => "error";
 
-const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, Query, {}>) => (transaction: Transaction) => {
+const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, Query, {}>) => (transaction: Transaction) => {
     const { offset, limit } = decodedInputs.query;
 
     return pipe(
         dataAccessLayer.userRepository.findAll(transaction, offset, limit),
-        chainEitherK((users) => 
+        chainEitherK((users) =>
             pipe(
                 usersCodec.decode(users),
                 mapLeft((errors) => failure(errors).join(","))
@@ -39,7 +39,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControlerDependencies<{}, 
     );
 };
 
-export const findAllUsersControler = buildControler({
+export const findAllUsersController = buildController({
     decodeInputs,
     buildError,
     callback,
