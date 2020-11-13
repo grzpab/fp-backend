@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "yarn eslint ./src/**/*.ts",
+    "lint:fix": "yarn eslint ./src/**/*.ts --fix",
     "watch": "nodemon --exec ./node_modules/.bin/ts-node ./src/index.ts"
   },
   "dependencies": {
