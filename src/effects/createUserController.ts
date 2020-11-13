@@ -1,14 +1,12 @@
 import { Transaction } from "sequelize/types";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
-import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
+import { emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { createUserCommandCodec, CreateUserCommand, userCodec } from "../codecs/userCodecs";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { mapLeft } from "fp-ts/lib/Either";
 import { buildError } from "../utilities/buildError";
-
-const emptyCodec = buildRetCodec({});
 
 const decodeInputs = curriedDecodeInputs({
     paramsCodec: emptyCodec,
