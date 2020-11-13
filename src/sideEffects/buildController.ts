@@ -43,8 +43,8 @@ export const buildController = <P, Q, B, E, A>(
         isolationLevel,
         dataAccessLayer.sequelize,
     )),
-    map(fold(
-        (e) => [500, e] as [HttpStatusCode, unknown],
-        (a) => [200, a] as [HttpStatusCode, unknown],
-    ))
+    map(fold<E, A, [HttpStatusCode, unknown]>(
+        (e) => [500, e],
+        (a) => [200, a],
+    )),
 );
