@@ -27,10 +27,10 @@ const buildRequestHandler = (
 type ServerRecipe = Readonly<{
     name: string,
     dataAccessLayer: DataAccessLayer,
-    healthCheckController?: Controller,
-    createUserController?: Controller,
-    updateUserController?: Controller,
-    findAllUsersController?: Controller,
+    healthCheckController: Controller,
+    createUserController: Controller,
+    updateUserController: Controller,
+    findAllUsersController: Controller,
 }>;
 
 export const buildServer = ({
@@ -58,21 +58,10 @@ export const buildServer = ({
         res.send(500);
     });
 
-    if (healthCheckController !== undefined) {
-        server.get("/", buildRequestHandler(dataAccessLayer, healthCheckController));
-    }
-
-    if (createUserController !== undefined) {
-        server.post("/users", buildRequestHandler(dataAccessLayer, createUserController));
-    }
-
-    if (updateUserController !== undefined) {
-        server.put("/users/{id}", buildRequestHandler(dataAccessLayer, updateUserController));
-    }
-
-    if (findAllUsersController !== undefined) {
-        server.get("/users", buildRequestHandler(dataAccessLayer, findAllUsersController));
-    }
+    server.get("/", buildRequestHandler(dataAccessLayer, healthCheckController));
+    server.post("/users", buildRequestHandler(dataAccessLayer, createUserController));
+    server.put("/users/{id}", buildRequestHandler(dataAccessLayer, updateUserController));
+    server.get("/users", buildRequestHandler(dataAccessLayer, findAllUsersController));
 
     return server;
 };

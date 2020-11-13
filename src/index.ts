@@ -9,6 +9,7 @@ import { startServer } from "./sideEffects/restify";
 import { healthCheckController } from "./effects/healthCheckController";
 import { createUserController } from "./effects/createUserController";
 import { findAllUsersController } from "./effects/findAllUsersController";
+import { updateUserController } from "./effects/updateUserController";
 
 const { env } = process;
 
@@ -32,6 +33,7 @@ const program = pipe(
         dataAccessLayer,
         healthCheckController,
         createUserController,
+        updateUserController,
         findAllUsersController,
     })),
     chain(startServer(24001))
