@@ -42,7 +42,7 @@ const program = pipe(
 const programFinishedCallback = <A, B>(either: Either<A, B>) => pipe(
     either,
     fold(
-        (error) => { console.log(`Connection unsuccesful: ${String(error)}`); },
+        (error) => { console.log(`Connection unsuccessful: ${String(error)}`); },
         () => { console.log("Connection successful"); }
     )
 );
