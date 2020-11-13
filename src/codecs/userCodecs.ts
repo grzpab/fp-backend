@@ -1,14 +1,14 @@
 import * as t from "io-ts";
 import { UUID } from "io-ts-types/lib/UUID";
-import { buildRetCodec, buildRepCodec, NumberFromDate } from "./sharedCodecs";
+import { buildRetCodec, NumberFromDate } from "./sharedCodecs";
 
-// create / update / delete / 
+// create / update / delete /
 export const createUserCommandCodec = buildRetCodec({
     username: t.string,
     password: t.string,
 });
 
-export const updateUserCommandCodec = buildRepCodec({
+export const updateUserCommandCodec = buildRetCodec({
     uuid: UUID,
     username: t.string,
     password: t.string,

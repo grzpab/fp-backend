@@ -69,6 +69,21 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         () => "Could not create a user"
     );
 
+    const update = (transaction: Transaction, id: string, username: string) : TaskEither<string, void> => tryCatch(
+        async () => {
+            await User.update(
+                { username },
+                {
+                    where: {
+                        id,
+                    },
+                    transaction,
+                },
+            );
+        },
+        () => "Could not create a user"
+    );
+
     const destroy = (transaction: Transaction, id: string): TaskEither<string, number> => tryCatch(
         async () => User.destroy({
             where: {
@@ -83,6 +98,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         findOne,
         findAll,
         create,
+        update,
         destroy,
     };
 };
