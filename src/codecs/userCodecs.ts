@@ -6,13 +6,11 @@ import { Either, mapLeft } from "fp-ts/Either";
 
 export const createUserCommandCodec = buildRetCodec({
     username: t.string,
-    password: t.string,
 });
 
 export const updateUserCommandCodec = buildRetCodec({
     uuid: UUID,
     username: t.string,
-    password: t.string,
 });
 
 export const userCodec = buildRetCodec({
