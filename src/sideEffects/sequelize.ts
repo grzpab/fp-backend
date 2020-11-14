@@ -30,12 +30,14 @@ const buildCheckConnection = (sequelize: Sequelize): TaskEither<string, void> =>
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const buildDataAccessLayer = (sequelize: Sequelize) => tryCatch(
     async () => {
+        const userRepository = userRepositoryBuilder(sequelize);
+
         await sequelize.sync();
 
         return {
             sequelize,
             checkConnection: buildCheckConnection(sequelize),
-            userRepository: userRepositoryBuilder(sequelize), 
+            userRepository,
         };
     },
     () => "Could not build a DataAccessLayer instance",
