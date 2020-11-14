@@ -3,3 +3,4 @@ require:
   - "source-map-support/register"
 full-trace: true
 bail: true
+spec: 'tests/**/*.test.ts'

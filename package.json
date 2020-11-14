@@ -8,7 +8,8 @@
   "scripts": {
     "lint": "yarn eslint ./src/**/*.ts",
     "lint:fix": "yarn eslint ./src/**/*.ts tests/**/*.ts --fix",
-    "test:unit": "mocha --config \".mocharc.yml\" tests/**/*.test.ts",
+    "test:unit": "mocha",
+    "test:coverage": "nyc mocha",
     "watch": "nodemon --exec ./node_modules/.bin/ts-node ./src/index.ts"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "ts-node": "9.0.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "1.0.1",
     "@types/bluebird": "3.5.33",
     "@types/chai": "4.2.14",
     "@types/mocha": "8.0.4",
@@ -39,6 +41,8 @@
     "chai": "4.2.0",
     "eslint": "7.13.0",
     "mocha": "8.2.1",
+    "nyc": "15.1.0",
+    "source-map-support": "0.5.19",
     "sqlite3": "5.0.0"
   }
 }
