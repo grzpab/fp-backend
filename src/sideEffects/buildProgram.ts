@@ -1,5 +1,5 @@
 import { pipe } from "fp-ts/pipeable";
-import { map, mapLeft } from "fp-ts/Either";
+import { mapLeft } from "fp-ts/Either";
 import { buildOptions } from "../effects/buildSequelizeOptions";
 import { chain, fromEither, map as mapTE, TaskEither } from "fp-ts/TaskEither";
 import { buildDataAccessLayer, buildSequelizeInstance } from "./sequelize";
@@ -14,17 +14,13 @@ import { configurationCodec } from "../codecs/configurationCodec";
 
 export const buildProgram = (env: unknown, name: string): TaskEither<unknown, void> => pipe(
     configurationCodec.decode(env),
-    map((configuration) => ({
-        options: buildOptions(configuration.RDB_HOST, configuration.RDB_PORT),
-        configuration,
-    })),
     mapLeft(String),
     fromEither,
-    chain(({ options, configuration }) => buildSequelizeInstance(
+    chain((configuration) => buildSequelizeInstance(
         configuration.RDB_DATABASE,
         configuration.RDB_USER,
         configuration.RDB_PASSWORD,
-        options,
+        buildOptions(configuration.RDB_HOST, configuration.RDB_PORT),
     )),
     chain(buildDataAccessLayer),
     mapTE((dataAccessLayer) => buildServer({
