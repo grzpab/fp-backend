@@ -7,17 +7,17 @@ import { buildTransaction } from "./buildTransaction";
 import type { Inputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
 
-export type ControllerInput = {
+export type ControllerInput = Readonly<{
     inputs: Inputs<unknown, unknown, unknown>,
     dataAccessLayer: DataAccessLayer,
     getTime: () => number,
-};
+}>;
 
-export type ControllerDependencies<P, Q, B> = {
+export type ControllerDependencies<P, Q, B> = Readonly<{
     decodedInputs: Inputs<P, Q, B>,
     dataAccessLayer: DataAccessLayer,
     getTime: () => number,
-};
+}>;
 
 export type ControllerRecipe<P, Q, B, E, A> = Readonly<{
     decodeInputs: (inputs: Inputs<unknown, unknown, unknown>) => Either<E, Inputs<P, Q, B>>,
