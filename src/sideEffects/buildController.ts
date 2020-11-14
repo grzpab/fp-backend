@@ -4,7 +4,7 @@ import { fold } from "fp-ts/lib/Either";
 import { Task, map } from "fp-ts/lib/Task";
 import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildTransaction } from "./buildTransaction";
-import { Inputs, curriedDecodeInputs } from "../effects/buildInputDecoder";
+import { Inputs, decodeInputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
 import { Decoder, Errors } from "io-ts";
 
@@ -47,13 +47,13 @@ export const buildController = <P, Q, B, E, A>(
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,
 ): Task<[HttpStatusCode, A | E]> => pipe(
-    // TODO remove currying
-    curriedDecodeInputs({
+    decodeInputs({
         paramsCodec,
         queryCodec,
         bodyCodec,
         mapErrors,
-    })(inputs),
+        inputs,
+    }),
     fromEither,
     chain(( decodedInputs ) => buildTransaction(
         buildError,
