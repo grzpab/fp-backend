@@ -21,7 +21,7 @@ export type ControllerDependencies<P, Q, B> = Readonly<{
 
 export type ControllerRecipe<P, Q, B, E, A> = Readonly<{
     decodeInputs: (inputs: Inputs<unknown, unknown, unknown>) => Either<E, Inputs<P, Q, B>>,
-    buildError: (dependencies: ControllerDependencies<P, Q, B>) => (e: unknown) => E,
+    buildError: (e: unknown) => E,
     callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<E, A>,
     isolationLevel: Transaction.ISOLATION_LEVELS,
 }>;
@@ -34,16 +34,16 @@ export const buildController = <P, Q, B, E, A>(
     { decodeInputs, buildError, callback, isolationLevel }: ControllerRecipe<P, Q, B, E, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,
-): Task<[HttpStatusCode, unknown]> => pipe(
+): Task<[HttpStatusCode, A | E]> => pipe(
     decodeInputs(inputs),
     fromEither,
     chain(( decodedInputs ) => buildTransaction(
-        buildError({ decodedInputs, dataAccessLayer, getTime }),
+        buildError,
         callback({ decodedInputs, dataAccessLayer, getTime }),
         isolationLevel,
         dataAccessLayer.sequelize,
     )),
-    map(fold<E, A, [HttpStatusCode, unknown]>(
+    map(fold<E, A, [HttpStatusCode, A | E]>(
         (e) => [500, e],
         (a) => [200, a],
     )),
