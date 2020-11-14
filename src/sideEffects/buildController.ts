@@ -1,11 +1,12 @@
 import type { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
-import { Either, fold } from "fp-ts/lib/Either";
+import { fold } from "fp-ts/lib/Either";
 import { Task, map } from "fp-ts/lib/Task";
 import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildTransaction } from "./buildTransaction";
-import type { Inputs } from "../effects/buildInputDecoder";
+import { Inputs, curriedDecodeInputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
+import { Decoder, Errors } from "io-ts";
 
 export type ControllerInput = Readonly<{
     inputs: Inputs<unknown, unknown, unknown>,
@@ -20,7 +21,10 @@ export type ControllerDependencies<P, Q, B> = Readonly<{
 }>;
 
 export type ControllerRecipe<P, Q, B, E, A> = Readonly<{
-    decodeInputs: (inputs: Inputs<unknown, unknown, unknown>) => Either<E, Inputs<P, Q, B>>,
+    paramsCodec: Decoder<unknown, P>,
+    queryCodec: Decoder<unknown, Q>,
+    bodyCodec: Decoder<unknown, B>,
+    mapErrors: (errors: Errors) => E,
     buildError: (e: unknown) => E,
     callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<E, A>,
     isolationLevel: Transaction.ISOLATION_LEVELS,
@@ -31,11 +35,25 @@ type HttpStatusCode = 200 | 201 | 204 | 400 | 403 | 404 | 500;
 export type Controller = (input: ControllerInput) => Task<[HttpStatusCode, unknown]>;
 
 export const buildController = <P, Q, B, E, A>(
-    { decodeInputs, buildError, callback, isolationLevel }: ControllerRecipe<P, Q, B, E, A>
+    {
+        paramsCodec,
+        queryCodec,
+        bodyCodec,
+        mapErrors,
+        buildError,
+        callback,
+        isolationLevel,
+    }: ControllerRecipe<P, Q, B, E, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,
 ): Task<[HttpStatusCode, A | E]> => pipe(
-    decodeInputs(inputs),
+    // TODO remove currying
+    curriedDecodeInputs({
+        paramsCodec,
+        queryCodec,
+        bodyCodec,
+        mapErrors,
+    })(inputs),
     fromEither,
     chain(( decodedInputs ) => buildTransaction(
         buildError,

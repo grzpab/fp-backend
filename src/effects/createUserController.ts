@@ -1,21 +1,16 @@
 import { Transaction } from "sequelize";
 import { buildController } from "../sideEffects/buildController";
-import { curriedDecodeInputs } from "./buildInputDecoder";
 import { emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { createUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodecs";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildError } from "./buildError";
 
-const decodeInputs = curriedDecodeInputs({
+export const createUserController = buildController({
     paramsCodec: emptyCodec,
     queryCodec: emptyCodec,
     bodyCodec: createUserCommandCodec,
     mapErrors,
-});
-
-export const createUserController = buildController({
-    decodeInputs,
     buildError,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, UserDto> => {

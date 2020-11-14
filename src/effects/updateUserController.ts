@@ -3,7 +3,6 @@ import { pipe } from "fp-ts/lib/pipeable";
 import { chain, chainEitherK } from "fp-ts/lib/TaskEither";
 import { UUID } from "io-ts-types/UUID";
 import { buildController } from "../sideEffects/buildController";
-import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { updateUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
@@ -13,15 +12,11 @@ const paramsCodec = buildRetCodec({
     id: UUID,
 });
 
-const decodeInputs = curriedDecodeInputs({
+export const updateUserController = buildController({
     paramsCodec,
     queryCodec: emptyCodec,
     bodyCodec: updateUserCommandCodec,
     mapErrors,
-});
-
-export const updateUserController = buildController({
-    decodeInputs,
     buildError,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, UserDto> => {

@@ -7,7 +7,7 @@ type InputsDecoders<P, Q, B, E> = Readonly<{
     paramsCodec: Decoder<unknown, P>,
     queryCodec: Decoder<unknown, Q>,
     bodyCodec: Decoder<unknown, B>,
-    mapErrors: (errors: Errors) => E, 
+    mapErrors: (errors: Errors) => E,
 }>;
 
 export type Inputs<P, Q, B> = Readonly<{

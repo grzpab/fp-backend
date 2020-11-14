@@ -1,6 +1,5 @@
 import * as t from "io-ts";
 import { buildController } from "../sideEffects/buildController";
-import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
@@ -14,15 +13,11 @@ const queryCodec = buildRetCodec({
     limit: t.Int,
 });
 
-const decodeInputs = curriedDecodeInputs({
+export const findAllUsersController = buildController({
     paramsCodec: emptyCodec,
     queryCodec,
     bodyCodec: emptyCodec,
     mapErrors,
-});
-
-export const findAllUsersController = buildController({
-    decodeInputs,
     buildError,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, ReadonlyArray<UserDto>> => {
