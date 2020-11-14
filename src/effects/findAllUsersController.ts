@@ -2,7 +2,7 @@ import * as t from "io-ts";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "src/codecs/sharedCodecs";
-import { Transaction } from "sequelize/types";
+import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { encodeUsers } from "src/codecs/userCodecs";

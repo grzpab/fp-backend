@@ -1,4 +1,4 @@
-import { Transaction } from "sequelize/types";
+import { Transaction } from "sequelize";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { emptyCodec, mapErrors } from "../codecs/sharedCodecs";

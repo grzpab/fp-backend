@@ -1,4 +1,4 @@
-import type { Sequelize, Transaction } from "sequelize/types";
+import type { Sequelize, Transaction } from "sequelize";
 import { tryCatch, chain, fromEither, TaskEither } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/lib/pipeable";
 

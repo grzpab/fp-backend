@@ -1,5 +1,5 @@
 import type { TypeOf } from "io-ts";
-import { Transaction } from "sequelize/types";
+import { Transaction } from "sequelize";
 import { UUID } from "io-ts-types/UUID";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";

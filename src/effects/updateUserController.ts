@@ -1,5 +1,5 @@
 import type { TypeOf } from "io-ts";
-import { Transaction } from "sequelize/types";
+import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chain, chainEitherK } from "fp-ts/lib/TaskEither";
 import { UUID } from "io-ts-types/UUID";
