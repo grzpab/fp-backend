@@ -2,9 +2,9 @@ import { Transaction } from "sequelize";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { emptyCodec, mapErrors } from "../codecs/sharedCodecs";
-import { createUserCommandCodec, CreateUserCommand, encodeUser } from "../codecs/userCodecs";
+import { createUserCommandCodec, CreateUserCommand, encodeUser, UserDto } from "../codecs/userCodecs";
 import { pipe } from "fp-ts/lib/pipeable";
-import { chainEitherK } from "fp-ts/lib/TaskEither";
+import { chainEitherK, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildError } from "./buildError";
 
 const decodeInputs = curriedDecodeInputs({
@@ -14,14 +14,15 @@ const decodeInputs = curriedDecodeInputs({
     mapErrors,
 });
 
-const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, {}, CreateUserCommand>) => (transaction: Transaction) => {
-    const { username } = decodedInputs.body;
+const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, {}, CreateUserCommand>) =>
+    (transaction: Transaction): TaskEither<string, UserDto> => {
+        const { username } = decodedInputs.body;
 
-    return pipe(
-        dataAccessLayer.userRepository.create(transaction, username),
-        chainEitherK(user => encodeUser(user.toJSON())),
-    );
-};
+        return pipe(
+            dataAccessLayer.userRepository.create(transaction, username),
+            chainEitherK(user => encodeUser(user.toJSON())),
+        );
+    };
 
 export const createUserController = buildController({
     decodeInputs,

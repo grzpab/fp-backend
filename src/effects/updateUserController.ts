@@ -6,8 +6,9 @@ import { UUID } from "io-ts-types/UUID";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
-import { updateUserCommandCodec, UpdateUserCommand, encodeUser } from "../codecs/userCodecs";
+import { updateUserCommandCodec, UpdateUserCommand, encodeUser, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
+import { TaskEither } from "fp-ts/TaskEither";
 
 const paramsCodec = buildRetCodec({
     id: UUID,
@@ -22,17 +23,18 @@ const decodeInputs = curriedDecodeInputs({
 
 type Params = TypeOf<typeof paramsCodec>;
 
-const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<Params, {}, UpdateUserCommand>) => (transaction: Transaction) => {
-    const { id } = decodedInputs.params;
-    const { username } = decodedInputs.body;
+const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<Params, {}, UpdateUserCommand>) =>
+    (transaction: Transaction): TaskEither<string, UserDto> => {
+        const { id } = decodedInputs.params;
+        const { username } = decodedInputs.body;
 
-    return pipe(
-        dataAccessLayer.userRepository.update(transaction, id, username),
-        chain(() => dataAccessLayer.userRepository.findOne(transaction, id)),
-        chainEitherK(encodeUser),
-    );
+        return pipe(
+            dataAccessLayer.userRepository.update(transaction, id, username),
+            chain(() => dataAccessLayer.userRepository.findOne(transaction, id)),
+            chainEitherK(encodeUser),
+        );
 
-};
+    };
 
 export const updateUserController = buildController({
     decodeInputs,

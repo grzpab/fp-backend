@@ -5,8 +5,9 @@ import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
-import { encodeUsers } from "../codecs/userCodecs";
+import { encodeUsers, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
+import { TaskEither } from "fp-ts/TaskEither";
 
 const queryCodec = buildRetCodec({
     offset: t.Int,
@@ -22,14 +23,15 @@ const decodeInputs = curriedDecodeInputs({
     mapErrors,
 });
 
-const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, Query, {}>) => (transaction: Transaction) => {
-    const { offset, limit } = decodedInputs.query;
+const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, Query, {}>) =>
+    (transaction: Transaction): TaskEither<string, ReadonlyArray<UserDto>> => {
+        const { offset, limit } = decodedInputs.query;
 
-    return pipe(
-        dataAccessLayer.userRepository.findAll(transaction, offset, limit),
-        chainEitherK((users) => encodeUsers(users.map(user => user.toJSON()))),
-    );
-};
+        return pipe(
+            dataAccessLayer.userRepository.findAll(transaction, offset, limit),
+            chainEitherK((users) => encodeUsers(users.map(user => user.toJSON()))),
+        );
+    };
 
 export const findAllUsersController = buildController({
     decodeInputs,

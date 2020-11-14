@@ -5,6 +5,7 @@ import { buildController, ControllerDependencies } from "../sideEffects/buildCon
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { buildError } from "./buildError";
+import { TaskEither } from "fp-ts/TaskEither";
 
 const paramsCodec = buildRetCodec({
     id: UUID,
@@ -19,11 +20,12 @@ const decodeInputs = curriedDecodeInputs({
 
 type Params = TypeOf<typeof paramsCodec>;
 
-const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<Params, {}, {}>) => (transaction: Transaction) => {
-    const { id } = decodedInputs.params;
+const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<Params, {}, {}>) =>
+    (transaction: Transaction): TaskEither<string, void> => {
+        const { id } = decodedInputs.params;
 
-    return dataAccessLayer.userRepository.destroy(transaction, id);
-};
+        return dataAccessLayer.userRepository.destroy(transaction, id);
+    };
 
 export const deleteUserController = buildController({
     decodeInputs,
