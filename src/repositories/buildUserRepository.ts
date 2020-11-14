@@ -102,7 +102,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
             }),
             () => "Could not destroy a user",
         ),
-        chainEitherKW((numberOfDestroyedRows) => (numberOfDestroyedRows === 1 ?
+        chainEitherKW((numberOfDestroyedRows) => (numberOfDestroyedRows !== 1 ?
             left(`Deleted ${numberOfDestroyedRows} rows`) :
             right(undefined)),
         )

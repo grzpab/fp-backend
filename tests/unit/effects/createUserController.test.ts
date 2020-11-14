@@ -21,16 +21,14 @@ describe("createUserController", () => {
                     },
                 },
                 dataAccessLayer,
-                getTime: () => 1,
+                getTime: () => Date.now(),
             })))
         );
 
         const either = await controller();
-
         assertIsRight(either);
 
         const result = either.right;
-
         assertIs200(result[0]);
 
         assert.strictEqual(result[1].username, "test_username");
