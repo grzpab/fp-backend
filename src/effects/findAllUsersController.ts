@@ -1,4 +1,3 @@
-import * as t from "io-ts";
 import { buildController } from "../sideEffects/buildController";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { Transaction } from "sequelize";
@@ -7,10 +6,11 @@ import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { encodeUsers, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
 import { TaskEither } from "fp-ts/TaskEither";
+import { NumberFromString } from "io-ts-types";
 
 const queryCodec = buildRetCodec({
-    offset: t.Int,
-    limit: t.Int,
+    offset: NumberFromString,
+    limit: NumberFromString,
 });
 
 export const findAllUsersController = buildController({
