@@ -16,11 +16,11 @@ export const buildProgram = (env: unknown, name: string): TaskEither<unknown, vo
     configurationCodec.decode(env),
     mapLeft(String),
     fromEither,
-    chain((configuration) => buildSequelizeInstance(
-        configuration.RDB_DATABASE,
-        configuration.RDB_USER,
-        configuration.RDB_PASSWORD,
-        buildOptions(configuration.RDB_HOST, configuration.RDB_PORT),
+    chain(({ RDB_DATABASE, RDB_USER, RDB_PASSWORD, RDB_HOST, RDB_PORT, RDB_POOL_MIN, RDB_POOL_MAX }) => buildSequelizeInstance(
+        RDB_DATABASE,
+        RDB_USER,
+        RDB_PASSWORD,
+        buildOptions(RDB_HOST, RDB_PORT, RDB_POOL_MIN, RDB_POOL_MAX),
     )),
     chain(buildDataAccessLayer),
     mapTE((dataAccessLayer) => buildServer({

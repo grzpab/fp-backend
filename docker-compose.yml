@@ -12,6 +12,8 @@ services:
             RDB_USER: "root"
             RDB_PASSWORD: "password"
             RDB_DATABASE: "r1ng"
+            RDB_POOL_MIN: "0"
+            RDB_POOL_MAX: "10"
         ports:
             - "24001:24001"
         volumes:

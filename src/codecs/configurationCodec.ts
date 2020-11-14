@@ -8,6 +8,6 @@ export const configurationCodec = buildRetCodec({
     RDB_USER: t.string,
     RDB_PASSWORD: t.string,
     RDB_DATABASE: t.string,
+    RDB_POOL_MIN: IntFromString,
+    RDB_POOL_MAX: IntFromString,
 });
-
-export type Configuration = t.TypeOf<typeof configurationCodec>;
