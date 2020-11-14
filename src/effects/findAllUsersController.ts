@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { buildController, ControllerDependencies } from "../sideEffects/buildController";
+import { buildController } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { Transaction } from "sequelize";
@@ -14,8 +14,6 @@ const queryCodec = buildRetCodec({
     limit: t.Int,
 });
 
-type Query = t.TypeOf<typeof queryCodec>;
-
 const decodeInputs = curriedDecodeInputs({
     paramsCodec: emptyCodec,
     queryCodec,
@@ -23,19 +21,17 @@ const decodeInputs = curriedDecodeInputs({
     mapErrors,
 });
 
-const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{}, Query, {}>) =>
-    (transaction: Transaction): TaskEither<string, ReadonlyArray<UserDto>> => {
-        const { offset, limit } = decodedInputs.query;
-
-        return pipe(
-            dataAccessLayer.userRepository.findAll(transaction, offset, limit),
-            chainEitherK((users) => encodeUsers(users.map(user => user.toJSON()))),
-        );
-    };
-
 export const findAllUsersController = buildController({
     decodeInputs,
     buildError,
-    callback,
+    callback: ({ decodedInputs, dataAccessLayer }) =>
+        (transaction: Transaction): TaskEither<string, ReadonlyArray<UserDto>> => {
+            const { offset, limit } = decodedInputs.query;
+
+            return pipe(
+                dataAccessLayer.userRepository.findAll(transaction, offset, limit),
+                chainEitherK((users) => encodeUsers(users.map(user => user.toJSON()))),
+            );
+        },
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
 });
