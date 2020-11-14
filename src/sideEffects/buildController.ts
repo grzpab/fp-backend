@@ -46,7 +46,7 @@ export const buildController = <P, Q, B, E, A>(
     }: ControllerRecipe<P, Q, B, E, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,
-): Task<[HttpStatusCode, A | E]> => pipe(
+): Task<[200, A] | [500, E]> => pipe(
     decodeInputs({
         paramsCodec,
         queryCodec,
@@ -61,7 +61,7 @@ export const buildController = <P, Q, B, E, A>(
         isolationLevel,
         dataAccessLayer.sequelize,
     )),
-    map(fold<E, A, [HttpStatusCode, A | E]>(
+    map(fold<E, A, [200, A] | [500, E]>(
         (e) => [500, e],
         (a) => [200, a],
     )),
