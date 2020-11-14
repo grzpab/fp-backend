@@ -7,7 +7,7 @@ import { buildController, ControllerDependencies } from "../sideEffects/buildCon
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { updateUserCommandCodec, UpdateUserCommand, encodeUser } from "../codecs/userCodecs";
-import { buildError } from "../utilities/buildError";
+import { buildError } from "./buildError";
 
 const paramsCodec = buildRetCodec({
     id: UUID,

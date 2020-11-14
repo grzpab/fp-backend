@@ -5,7 +5,7 @@ import { emptyCodec, mapErrors } from "../codecs/sharedCodecs";
 import { createUserCommandCodec, CreateUserCommand, encodeUser } from "../codecs/userCodecs";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
-import { buildError } from "../utilities/buildError";
+import { buildError } from "./buildError";
 
 const decodeInputs = curriedDecodeInputs({
     paramsCodec: emptyCodec,

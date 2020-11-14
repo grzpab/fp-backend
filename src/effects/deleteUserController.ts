@@ -4,7 +4,7 @@ import { UUID } from "io-ts-types/UUID";
 import { buildController, ControllerDependencies } from "../sideEffects/buildController";
 import { curriedDecodeInputs } from "./buildInputDecoder";
 import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
-import { buildError } from "../utilities/buildError";
+import { buildError } from "./buildError";
 
 const paramsCodec = buildRetCodec({
     id: UUID,

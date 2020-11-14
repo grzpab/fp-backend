@@ -6,7 +6,7 @@ import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { encodeUsers } from "src/codecs/userCodecs";
-import { buildError } from "../utilities/buildError";
+import { buildError } from "./buildError";
 
 const queryCodec = buildRetCodec({
     offset: t.Int,
