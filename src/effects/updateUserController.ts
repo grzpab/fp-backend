@@ -27,7 +27,7 @@ export const updateUserController = buildController({
             return pipe(
                 dataAccessLayer.userRepository.update(transaction, id, username),
                 chain(() => dataAccessLayer.userRepository.findOne(transaction, id)),
-                chainEitherK(encodeUser),
+                chainEitherK(user => encodeUser(user.toJSON())),
             );
 
         },

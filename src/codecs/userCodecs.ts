@@ -10,7 +10,6 @@ export const createUserCommandCodec = buildRetCodec({
 });
 
 export const updateUserCommandCodec = buildRetCodec({
-    uuid: UUID,
     username: t.string,
 });
 
