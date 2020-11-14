@@ -21,29 +21,32 @@ export const userCodec = buildRetCodec({
     updatedAt: date,
 });
 
-export const usersCodec = t.readonlyArray(userCodec);
-
 export type CreateUserCommand = t.TypeOf<typeof createUserCommandCodec>;
 export type UpdateUserCommand = t.TypeOf<typeof updateUserCommandCodec>;
+export type User = t.TypeOf<typeof userCodec>;
 
-export const encodeUser = (user: unknown): Either<string, unknown> => pipe(
+export type UserDto = Readonly<{
+    id: string,
+    username: string,
+    createdAt: number,
+    updatedAt: number,
+}>;
+
+export const mapDecodedUserToUserDto = ({ id, username, createdAt, updatedAt }: User): UserDto => ({
+    id,
+    username,
+    createdAt: createdAt.getTime(),
+    updatedAt: updatedAt.getTime(),
+});
+
+export const encodeUser = (user: unknown): Either<string, UserDto> => pipe(
     userCodec.decode(user),
     mapLeft(mapErrors),
-    map(({ id, username, createdAt, updatedAt }) => ({
-        id,
-        username,
-        createdAt: createdAt.getTime(),
-        updatedAt: updatedAt.getTime(),
-    })),
+    map(mapDecodedUserToUserDto),
 );
 
-export const encodeUsers = (users: unknown): Either<string, unknown> => pipe(
-    usersCodec.decode(users),
+export const encodeUsers = (users: unknown): Either<string, ReadonlyArray<UserDto>> => pipe(
+    t.readonlyArray(userCodec).decode(users),
     mapLeft(mapErrors),
-    map((_users) => _users.map(user => ({
-        id: user.id,
-        username: user.username,
-        createdAt: user.createdAt.getTime(),
-        updatedAt: user.updatedAt.getTime(),
-    }))),
+    map((_users) => _users.map(mapDecodedUserToUserDto)),
 );
