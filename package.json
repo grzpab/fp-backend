@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "yarn eslint ./src/**/*.ts",
     "lint:fix": "yarn eslint ./src/**/*.ts --fix",
+    "test:unit": "mocha --config \".mocharc.yml\" tests/**/*.test.ts",
     "watch": "nodemon --exec ./node_modules/.bin/ts-node ./src/index.ts"
   },
   "dependencies": {
