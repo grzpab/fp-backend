@@ -19,7 +19,7 @@ const callback = ({ decodedInputs, dataAccessLayer }: ControllerDependencies<{},
 
     return pipe(
         dataAccessLayer.userRepository.create(transaction, username),
-        chainEitherK(encodeUser),
+        chainEitherK(user => encodeUser(user.toJSON())),
     );
 };
 
