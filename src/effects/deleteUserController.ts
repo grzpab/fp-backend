@@ -15,11 +15,11 @@ export const deleteUserController = buildController({
     bodyCodec: emptyCodec,
     mapErrors,
     buildError,
+    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, void> => {
             const { id } = decodedInputs.params;
 
             return dataAccessLayer.userRepository.destroy(transaction, id);
         },
-    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
 });

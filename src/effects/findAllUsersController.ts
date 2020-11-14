@@ -19,6 +19,7 @@ export const findAllUsersController = buildController({
     bodyCodec: emptyCodec,
     mapErrors,
     buildError,
+    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, ReadonlyArray<UserDto>> => {
             const { offset, limit } = decodedInputs.query;
@@ -28,5 +29,4 @@ export const findAllUsersController = buildController({
                 chainEitherK((users) => encodeUsers(users.map(user => user.toJSON()))),
             );
         },
-    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
 });

@@ -26,8 +26,8 @@ export type ControllerRecipe<P, Q, B, E, A> = Readonly<{
     bodyCodec: Decoder<unknown, B>,
     mapErrors: (errors: Errors) => E,
     buildError: (e: unknown) => E,
-    callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<E, A>,
     isolationLevel: Transaction.ISOLATION_LEVELS,
+    callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<E, A>,
 }>;
 
 type HttpStatusCode = 200 | 201 | 204 | 400 | 403 | 404 | 500;
@@ -41,8 +41,8 @@ export const buildController = <P, Q, B, E, A>(
         bodyCodec,
         mapErrors,
         buildError,
-        callback,
         isolationLevel,
+        callback,
     }: ControllerRecipe<P, Q, B, E, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,

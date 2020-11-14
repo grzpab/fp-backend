@@ -12,6 +12,7 @@ export const createUserController = buildController({
     bodyCodec: createUserCommandCodec,
     mapErrors,
     buildError,
+    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, UserDto> => {
             const { username } = decodedInputs.body;
@@ -21,5 +22,4 @@ export const createUserController = buildController({
                 chainEitherK(user => encodeUser(user.toJSON())),
             );
         },
-    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
 });

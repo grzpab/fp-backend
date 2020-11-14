@@ -18,6 +18,7 @@ export const updateUserController = buildController({
     bodyCodec: updateUserCommandCodec,
     mapErrors,
     buildError,
+    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<string, UserDto> => {
             const { id } = decodedInputs.params;
@@ -30,5 +31,4 @@ export const updateUserController = buildController({
             );
 
         },
-    isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
 });
