@@ -3,8 +3,8 @@ import { buildDataAccessLayer } from "../../../src/sideEffects/sequelize";
 import { Sequelize } from "sequelize";
 import { pipe } from "fp-ts/pipeable";
 import { map } from "fp-ts/lib/TaskEither";
-import { isLeft } from "fp-ts/Either";
 import { assert } from "chai";
+import { assertIsRight } from "../../../src/sideEffects/assertIsRight";
 
 describe("createUserController", () => {
     it("creates a new user", async () => {
@@ -27,9 +27,7 @@ describe("createUserController", () => {
 
         const either = await controller();
 
-        if (isLeft(either)) {
-            return;
-        }
+        assertIsRight(either);
 
         const [ httpStatusCode ] = await either.right();
 
