@@ -54,7 +54,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                     },
                     transaction,
                 }),
-                () => "Could not find a user",
+                (reason) => `Could not find a user: ${String(reason)}.`,
             ),
             map(fromNullable),
             chainEitherKW(fromOption(() => "Could not find a user")),
@@ -66,7 +66,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
             limit,
             transaction
         }),
-        () => "Could not find users",
+        (reason) => `Could not find users ${String(reason)}.`,
     );
 
     const create = (transaction: Transaction, username: string) : TaskEither<string, User> => tryCatch(
@@ -74,7 +74,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
             { username },
             { transaction },
         ),
-        () => "Could not create a user"
+        (reason) => `Could not create a user: ${String(reason)}.`
     );
 
     const update = (transaction: Transaction, id: string, username: string) : TaskEither<string, void> => tryCatch(
@@ -89,7 +89,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 },
             );
         },
-        () => "Could not create a user"
+        (reason) => `Could not create a user: ${String(reason)}.`
     );
 
     const destroy = (transaction: Transaction, id: string): TaskEither<string, void>  => pipe(
@@ -100,7 +100,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 },
                 transaction,
             }),
-            () => "Could not destroy a user",
+            (reason) => `Could not destroy a user: ${String(reason)}.`,
         ),
         chainEitherKW((numberOfDestroyedRows) => (numberOfDestroyedRows !== 1 ?
             left(`Deleted ${numberOfDestroyedRows} rows`) :
@@ -116,5 +116,3 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         destroy,
     };
 };
-
-export type UserRepository = ReturnType<typeof userRepositoryBuilder>;

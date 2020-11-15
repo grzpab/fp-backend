@@ -18,13 +18,13 @@ export const buildSequelizeInstance = (
     await sequelize.authenticate();
 
     return sequelize;
-}, (err) => `$Could not authenticate a Sequelize instance: ${String(err)}.`);
+}, (reason) => `$Could not authenticate a Sequelize instance: ${String(reason)}.`);
 
 const buildCheckConnection = (sequelize: Sequelize): TaskEither<string, void> => tryCatch(
     async (): Promise<void> => {
         await sequelize.query("SELECT 1");
     },
-    () => "Could not connect to the database anymore."
+    (reason) => `Could not connect to the database anymore: ${String(reason)}`,
 );
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -40,7 +40,7 @@ export const buildDataAccessLayer = (sequelize: Sequelize) => tryCatch(
             userRepository,
         };
     },
-    () => "Could not build a DataAccessLayer instance",
+    (reason) => `Could not build a DataAccessLayer instance: ${String(reason)}.`,
 );
 
 type DataAccessLayerTaskEither = ReturnType<typeof buildDataAccessLayer>;

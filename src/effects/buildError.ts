@@ -1,1 +1,1 @@
-export const buildError = (_: unknown): string => "Unknown error occurred.";
+export const buildError = (reason: unknown): string => `Unknown error occurred: ${String(reason)}`;
