@@ -1,17 +1,17 @@
 version: '3'
 
 services:
-    r1ng-backend:
+    fp-backend:
         build:
             context: .
             dockerfile: Dockerfile
         command: yarn watch
         environment:
-            RDB_HOST: "r1ng-database"
+            RDB_HOST: "fp-database"
             RDB_PORT: "3306"
             RDB_USER: "root"
             RDB_PASSWORD: "password"
-            RDB_DATABASE: "r1ng"
+            RDB_DATABASE: "fp"
             RDB_POOL_MIN: "0"
             RDB_POOL_MAX: "10"
         ports:
@@ -19,22 +19,22 @@ services:
         volumes:
             - ./src:/opt/r1ng/src
         depends_on:
-            - "r1ng-database"
+            - "fp-database"
         networks:
-            - "r1ng-local-network"
+            - "fp-local-network"
 
-    r1ng-database:
+    fp-database:
         image: mysql:8.0.19
         restart: unless-stopped
         environment:
             MYSQL_ROOT_PASSWORD: "password"
-            MYSQL_DATABASE: 'r1ng'
+            MYSQL_DATABASE: 'fp'
         ports:
             - "24002:3306"
         networks:
-            - "r1ng-local-network"
+            - "fp-local-network"
 
 networks:
-    r1ng-local-network:
+    fp-local-network:
         external:
-            name: "r1ng-local-network"
+            name: "fp-local-network"

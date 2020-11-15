@@ -4,11 +4,8 @@ EXPOSE 24001
 
 WORKDIR /opt/r1ng
 
-COPY ./package.json /opt/r1ng/package.json
-COPY ./yarn.lock yarn.lock
+COPY ./package.json ./yarn.lock /opt/r1ng/
 
 RUN yarn
 
-COPY tsconfig.json /opt/r1ng/tsconfig.json
-COPY src /opt/r1ng/src
-COPY types /opt/r1ng/types
+COPY tsconfig.json src /opt/r1ng/
