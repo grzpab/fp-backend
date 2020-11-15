@@ -9,7 +9,7 @@ type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | 
 
 export const buildUuidColumn = (options: Options): ModelAttributeColumnOptions => Object.assign(
     {
-        type : DataTypes.UUIDV4,
+        type : DataTypes.UUID,
     },
     options,
 );
