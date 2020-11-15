@@ -3,8 +3,9 @@ import { buildDataAccessLayer } from "../../../src/sideEffects/sequelize";
 import { Sequelize } from "sequelize";
 import { pipe } from "fp-ts/pipeable";
 import { chain, fromTask } from "fp-ts/lib/TaskEither";
-import { assertIs200, assertIsRight } from "../../../src/sideEffects/asserts";
 import { assert } from "chai";
+import { assert as tsAssert } from "ts-essentials/dist/functions";
+import { isRight } from "fp-ts/Either";
 
 describe("createUserController", () => {
     it("creates a new user", async () => {
@@ -26,11 +27,11 @@ describe("createUserController", () => {
         );
 
         const either = await controller();
-        assertIsRight(either);
+        tsAssert(isRight(either));
 
         const result = either.right;
-        assertIs200(result[0]);
 
+        tsAssert(result[0] === 200);
         assert.strictEqual(result[1].username, "test_username");
     });
 });

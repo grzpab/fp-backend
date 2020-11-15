@@ -2,10 +2,11 @@ import { buildDataAccessLayer } from "../../../src/sideEffects/sequelize";
 import { Sequelize, Transaction } from "sequelize";
 import { pipe } from "fp-ts/pipeable";
 import { chain, fromTask } from "fp-ts/lib/TaskEither";
-import { assertIs200, assertIsRight } from "../../../src/sideEffects/asserts";
 import { buildTransaction } from "../../../src/sideEffects/buildTransaction";
 import { buildError } from "../../../src/effects/buildError";
 import { deleteUserController } from "../../../src/effects/deleteUserController";
+import { assert as tsAssert } from "ts-essentials/dist/functions";
+import { isRight } from "fp-ts/Either";
 
 describe("deleteUserController", () => {
     it("deletes a user", async () => {
@@ -35,10 +36,11 @@ describe("deleteUserController", () => {
         );
 
         const either = await program();
-        assertIsRight(either);
+        tsAssert(isRight(either));
 
         const result = either.right;
-        assertIs200(result[0]);
+
+        tsAssert(result[0] === 200);
     });
 });
 

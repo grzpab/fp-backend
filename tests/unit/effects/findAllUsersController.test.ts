@@ -2,11 +2,12 @@ import { buildDataAccessLayer } from "../../../src/sideEffects/sequelize";
 import { Sequelize, Transaction } from "sequelize";
 import { pipe } from "fp-ts/pipeable";
 import { chain, fromTask } from "fp-ts/lib/TaskEither";
-import { assertIs200, assertIsRight } from "../../../src/sideEffects/asserts";
 import { buildTransaction } from "../../../src/sideEffects/buildTransaction";
 import { buildError } from "../../../src/effects/buildError";
 import { assert } from "chai";
 import { findAllUsersController } from "../../../src/effects/findAllUsersController";
+import { assert as tsAssert } from "ts-essentials/dist/functions";
+import { isRight } from "fp-ts/Either";
 
 describe("findAllUsersController", () => {
     it("finds a user", async () => {
@@ -37,10 +38,11 @@ describe("findAllUsersController", () => {
         );
 
         const either = await program();
-        assertIsRight(either);
+        tsAssert(isRight(either));
 
         const result = either.right;
-        assertIs200(result[0]);
+
+        tsAssert(result[0] === 200);
 
         assert.strictEqual(result[1].length, 1);
         assert.strictEqual(result[1][0].username, "test_username");
