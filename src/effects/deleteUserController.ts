@@ -1,7 +1,8 @@
+import * as t from "io-ts";
 import { Transaction } from "sequelize";
 import { UUID } from "io-ts-types/UUID";
 import { buildController } from "../sideEffects/buildController";
-import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
+import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
 import { buildError } from "./buildError";
 import { TaskEither } from "fp-ts/TaskEither";
 
@@ -11,8 +12,8 @@ const paramsCodec = buildRetCodec({
 
 export const deleteUserController = buildController({
     paramsCodec,
-    queryCodec: emptyCodec,
-    bodyCodec: emptyCodec,
+    queryCodec: t.unknown,
+    bodyCodec: t.unknown,
     mapErrors,
     buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,

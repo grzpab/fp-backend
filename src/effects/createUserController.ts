@@ -1,14 +1,15 @@
+import * as t from "io-ts";
 import { Transaction } from "sequelize";
 import { buildController } from "../sideEffects/buildController";
-import { emptyCodec, mapErrors } from "../codecs/sharedCodecs";
+import { mapErrors } from "../codecs/sharedCodecs";
 import { createUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodecs";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildError } from "./buildError";
 
 export const createUserController = buildController({
-    paramsCodec: emptyCodec,
-    queryCodec: emptyCodec,
+    paramsCodec: t.unknown,
+    queryCodec: t.unknown,
     bodyCodec: createUserCommandCodec,
     mapErrors,
     buildError,

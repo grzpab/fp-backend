@@ -1,5 +1,6 @@
+import * as t from "io-ts";
 import { buildController } from "../sideEffects/buildController";
-import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
+import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
 import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
@@ -14,9 +15,9 @@ const queryCodec = buildRetCodec({
 });
 
 export const findAllUsersController = buildController({
-    paramsCodec: emptyCodec,
+    paramsCodec: t.unknown,
     queryCodec,
-    bodyCodec: emptyCodec,
+    bodyCodec: t.unknown,
     mapErrors,
     buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,

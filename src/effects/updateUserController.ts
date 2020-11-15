@@ -1,9 +1,10 @@
+import * as t from "io-ts";
 import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chain, chainEitherK } from "fp-ts/lib/TaskEither";
 import { UUID } from "io-ts-types/UUID";
 import { buildController } from "../sideEffects/buildController";
-import { buildRetCodec, emptyCodec, mapErrors } from "../codecs/sharedCodecs";
+import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
 import { updateUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
 import { TaskEither } from "fp-ts/TaskEither";
@@ -14,7 +15,7 @@ const paramsCodec = buildRetCodec({
 
 export const updateUserController = buildController({
     paramsCodec,
-    queryCodec: emptyCodec,
+    queryCodec: t.unknown,
     bodyCodec: updateUserCommandCodec,
     mapErrors,
     buildError,
