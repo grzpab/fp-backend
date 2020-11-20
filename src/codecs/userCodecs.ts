@@ -21,8 +21,6 @@ export const userCodec = buildRetCodec({
     updatedAt: date,
 });
 
-export type CreateUserCommand = t.TypeOf<typeof createUserCommandCodec>;
-export type UpdateUserCommand = t.TypeOf<typeof updateUserCommandCodec>;
 export type User = t.TypeOf<typeof userCodec>;
 
 export type UserDto = Readonly<{
