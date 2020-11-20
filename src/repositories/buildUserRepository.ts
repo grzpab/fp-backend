@@ -4,7 +4,7 @@ import { tryCatch, TaskEither, map, chainEitherKW } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/function";
 import { fromNullable } from "fp-ts/lib/Option";
 import { fromOption, left, right } from "fp-ts/Either";
-import { buildProgramError, ProgramError } from "../errors";
+import { buildNotFoundError, buildProgramError, ProgramError } from "../errors";
 
 type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | "primaryKey">;
 
@@ -55,10 +55,10 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                     },
                     transaction,
                 }),
-                (reason) => buildProgramError(`Could not find a user: ${String(reason)}.`),
+                (reason) => buildNotFoundError(`Could not find a user: ${String(reason)}.`),
             ),
             map(fromNullable),
-            chainEitherKW(fromOption(() => buildProgramError("Could not find a user"))),
+            chainEitherKW(fromOption(() => buildNotFoundError("Could not find a user"))),
         );
 
     const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<ProgramError, ReadonlyArray<User>> => tryCatch(
@@ -67,7 +67,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
             limit,
             transaction
         }),
-        (reason) => buildProgramError(`Could not find users ${String(reason)}.`),
+        (reason) => buildNotFoundError(`Could not find users ${String(reason)}.`),
     );
 
     const create = (transaction: Transaction, username: string) : TaskEither<ProgramError, User> => tryCatch(

@@ -19,7 +19,7 @@ const buildRequestHandler = (
     };
 
     const [ code, data ] = await controller(input)();
-
+    
     res.send(code, data);
     res.end();
 };

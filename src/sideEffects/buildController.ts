@@ -45,7 +45,7 @@ export const buildController = <P, Q, B, A>(
     }: ControllerRecipe<P, Q, B, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,
-): Task<[200, A] | [500, ProgramError]> => pipe(
+): Task<[200, A] | [404 | 500, ProgramError]> => pipe(
     decodeInputs({
         paramsCodec,
         queryCodec,
@@ -60,8 +60,14 @@ export const buildController = <P, Q, B, A>(
         isolationLevel,
         dataAccessLayer.sequelize,
     )),
-    map(fold<ProgramError, A, [200, A] | [500, ProgramError]>(
-        (e) => [500, e],
+    map(fold<ProgramError, A, [200, A] | [404 | 500, ProgramError]>(
+        (e) => {
+            if (e.type === "NOT_FOUND") {
+                return [404, e];
+            }
+
+            return [500, e];
+        },
         (a) => [200, a],
     )),
 );
