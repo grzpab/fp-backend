@@ -6,9 +6,10 @@ import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildTransaction } from "./buildTransaction";
 import { Inputs, decodeInputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
-import type { Decoder, Errors } from "io-ts";
+import type { Decoder } from "io-ts";
 import type { ProgramError } from "../errors";
 import { buildError } from "../effects/buildError";
+import { mapErrors } from "../codecs/sharedCodecs";
 
 export type ControllerInput = Readonly<{
     inputs: Inputs<unknown, unknown, unknown>,
@@ -26,7 +27,6 @@ export type ControllerRecipe<P, Q, B, A> = Readonly<{
     paramsCodec: Decoder<unknown, P>,
     queryCodec: Decoder<unknown, Q>,
     bodyCodec: Decoder<unknown, B>,
-    mapErrors: (errors: Errors) => ProgramError,
     isolationLevel: Transaction.ISOLATION_LEVELS,
     callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<ProgramError, A>,
 }>;
@@ -40,7 +40,6 @@ export const buildController = <P, Q, B, A>(
         paramsCodec,
         queryCodec,
         bodyCodec,
-        mapErrors,
         isolationLevel,
         callback,
     }: ControllerRecipe<P, Q, B, A>
