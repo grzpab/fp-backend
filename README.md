@@ -1,6 +1,6 @@
 # fp-backend
 
-A REST API project for testing functional programming capabilities in TypeScript.
+An experimental REST API project for testing functional programming capabilities in TypeScript.
 
 ## Stack
 * Docker 2 / Docker-Compose 3
@@ -28,7 +28,7 @@ The most fundamental structure in this project is `TaskEither<E, A>` which is a 
 
 As most of our operations are asynchronous and may fail, we need to use `TaskEither` as the return type from functions that communicate with the outside world.
 
-I decided to represent the error type as `string` for convenience's sake.
+I decided to represent the error type as `ProductError` for convenience's sake.
 
 ## Install and Run
 
