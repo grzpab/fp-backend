@@ -4,6 +4,7 @@ import { tryCatch, TaskEither, map, chainEitherKW } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/function";
 import { fromNullable } from "fp-ts/lib/Option";
 import { fromOption, left, right } from "fp-ts/Either";
+import { buildProgramError, ProgramError } from "../errors";
 
 type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | "primaryKey">;
 
@@ -45,7 +46,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         timestamps: true,
     });
 
-    const findOne = (transaction: Transaction, id: string) : TaskEither<string, User>  =>
+    const findOne = (transaction: Transaction, id: string) : TaskEither<ProgramError, User>  =>
         pipe(
             tryCatch(
                 async () => User.findOne({
@@ -54,30 +55,30 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                     },
                     transaction,
                 }),
-                (reason) => `Could not find a user: ${String(reason)}.`,
+                (reason) => buildProgramError(`Could not find a user: ${String(reason)}.`),
             ),
             map(fromNullable),
-            chainEitherKW(fromOption(() => "Could not find a user")),
+            chainEitherKW(fromOption(() => buildProgramError("Could not find a user"))),
         );
 
-    const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<string, ReadonlyArray<User>> => tryCatch(
+    const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<ProgramError, ReadonlyArray<User>> => tryCatch(
         async () => User.findAll({
             offset,
             limit,
             transaction
         }),
-        (reason) => `Could not find users ${String(reason)}.`,
+        (reason) => buildProgramError(`Could not find users ${String(reason)}.`),
     );
 
-    const create = (transaction: Transaction, username: string) : TaskEither<string, User> => tryCatch(
+    const create = (transaction: Transaction, username: string) : TaskEither<ProgramError, User> => tryCatch(
         async () => User.create(
             { username },
             { transaction },
         ),
-        (reason) => `Could not create a user: ${String(reason)}.`
+        (reason) => buildProgramError(`Could not create a user: ${String(reason)}.`),
     );
 
-    const update = (transaction: Transaction, id: string, username: string) : TaskEither<string, void> => tryCatch(
+    const update = (transaction: Transaction, id: string, username: string) : TaskEither<ProgramError, void> => tryCatch(
         async () => {
             await User.update(
                 { username },
@@ -89,10 +90,10 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 },
             );
         },
-        (reason) => `Could not create a user: ${String(reason)}.`
+        (reason) => buildProgramError(`Could not create a user: ${String(reason)}.`),
     );
 
-    const destroy = (transaction: Transaction, id: string): TaskEither<string, void>  => pipe(
+    const destroy = (transaction: Transaction, id: string): TaskEither<ProgramError, void>  => pipe(
         tryCatch(
             async () => User.destroy({
                 where: {
@@ -100,10 +101,10 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 },
                 transaction,
             }),
-            (reason) => `Could not destroy a user: ${String(reason)}.`,
+            (reason) => buildProgramError(`Could not destroy a user: ${String(reason)}.`),
         ),
         chainEitherKW((numberOfDestroyedRows) => (numberOfDestroyedRows !== 1 ?
-            left(`Deleted ${numberOfDestroyedRows} rows`) :
+            left(buildProgramError(`Deleted ${numberOfDestroyedRows} rows`)) :
             right(undefined)),
         )
     );

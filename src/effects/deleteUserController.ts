@@ -5,6 +5,7 @@ import { buildController } from "../sideEffects/buildController";
 import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
 import { buildError } from "./buildError";
 import { TaskEither } from "fp-ts/TaskEither";
+import { ProgramError } from "../errors";
 
 const paramsCodec = buildRetCodec({
     id: UUID,
@@ -18,7 +19,7 @@ export const deleteUserController = buildController({
     buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
-        (transaction: Transaction): TaskEither<string, void> => {
+        (transaction: Transaction): TaskEither<ProgramError, void> => {
             const { id } = decodedInputs.params;
 
             return dataAccessLayer.userRepository.destroy(transaction, id);

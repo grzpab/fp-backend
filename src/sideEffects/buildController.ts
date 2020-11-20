@@ -6,7 +6,8 @@ import { fromEither, chain, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildTransaction } from "./buildTransaction";
 import { Inputs, decodeInputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
-import { Decoder, Errors } from "io-ts";
+import type { Decoder, Errors } from "io-ts";
+import type { ProgramError } from "../errors";
 
 export type ControllerInput = Readonly<{
     inputs: Inputs<unknown, unknown, unknown>,
@@ -20,21 +21,21 @@ export type ControllerDependencies<P, Q, B> = Readonly<{
     getTime: () => number,
 }>;
 
-export type ControllerRecipe<P, Q, B, E, A> = Readonly<{
+export type ControllerRecipe<P, Q, B, A> = Readonly<{
     paramsCodec: Decoder<unknown, P>,
     queryCodec: Decoder<unknown, Q>,
     bodyCodec: Decoder<unknown, B>,
-    mapErrors: (errors: Errors) => E,
-    buildError: (e: unknown) => E,
+    mapErrors: (errors: Errors) => ProgramError,
+    buildError: (e: unknown) => ProgramError,
     isolationLevel: Transaction.ISOLATION_LEVELS,
-    callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<E, A>,
+    callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<ProgramError, A>,
 }>;
 
 type HttpStatusCode = 200 | 201 | 204 | 400 | 403 | 404 | 500;
 
 export type Controller = (input: ControllerInput) => Task<[HttpStatusCode, unknown]>;
 
-export const buildController = <P, Q, B, E, A>(
+export const buildController = <P, Q, B, A>(
     {
         paramsCodec,
         queryCodec,
@@ -43,10 +44,10 @@ export const buildController = <P, Q, B, E, A>(
         buildError,
         isolationLevel,
         callback,
-    }: ControllerRecipe<P, Q, B, E, A>
+    }: ControllerRecipe<P, Q, B, A>
 ) => (
     { inputs, dataAccessLayer, getTime }: ControllerInput,
-): Task<[200, A] | [500, E]> => pipe(
+): Task<[200, A] | [500, ProgramError]> => pipe(
     decodeInputs({
         paramsCodec,
         queryCodec,
@@ -61,7 +62,7 @@ export const buildController = <P, Q, B, E, A>(
         isolationLevel,
         dataAccessLayer.sequelize,
     )),
-    map(fold<E, A, [200, A] | [500, E]>(
+    map(fold<ProgramError, A, [200, A] | [500, ProgramError]>(
         (e) => [500, e],
         (a) => [200, a],
     )),

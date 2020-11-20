@@ -1,13 +1,14 @@
 import type { Sequelize, Transaction } from "sequelize";
 import { tryCatch, chain, fromEither, TaskEither } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/lib/pipeable";
+import type { ProgramError } from "../errors";
 
-export const buildTransaction = <E, A>(
-    buildError: (e: unknown) => E,
-    callback: (t: Transaction) => TaskEither<E, A>,
+export const buildTransaction = <A>(
+    buildError: (e: unknown) => ProgramError,
+    callback: (t: Transaction) => TaskEither<ProgramError, A>,
     isolationLevel: Transaction.ISOLATION_LEVELS,
     sequelize: Sequelize,
-): TaskEither<E, A> => pipe(
+): TaskEither<ProgramError, A> => pipe(
     tryCatch(
         async () => sequelize.transaction(
             { isolationLevel },

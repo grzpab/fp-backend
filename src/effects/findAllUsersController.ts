@@ -6,8 +6,9 @@ import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { encodeUsers, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
-import { TaskEither } from "fp-ts/TaskEither";
+import type { TaskEither } from "fp-ts/TaskEither";
 import { NumberFromString } from "io-ts-types";
+import type { ProgramError } from "../errors";
 
 const queryCodec = buildRetCodec({
     offset: NumberFromString,
@@ -22,7 +23,7 @@ export const findAllUsersController = buildController({
     buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
-        (transaction: Transaction): TaskEither<string, ReadonlyArray<UserDto>> => {
+        (transaction: Transaction): TaskEither<ProgramError, ReadonlyArray<UserDto>> => {
             const { offset, limit } = decodedInputs.query;
 
             return pipe(

@@ -1,1 +1,3 @@
-export const buildError = (reason: unknown): string => `Unknown error occurred: ${String(reason)}`;
+import { buildProgramError, ProgramError } from "../errors";
+
+export const buildError = (reason: unknown): ProgramError => buildProgramError(`Unknown error occurred: ${String(reason)}`);

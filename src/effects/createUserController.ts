@@ -6,6 +6,7 @@ import { createUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodec
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK, TaskEither } from "fp-ts/lib/TaskEither";
 import { buildError } from "./buildError";
+import type { ProgramError } from "../errors";
 
 export const createUserController = buildController({
     paramsCodec: t.unknown,
@@ -15,7 +16,7 @@ export const createUserController = buildController({
     buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
-        (transaction: Transaction): TaskEither<string, UserDto> => {
+        (transaction: Transaction): TaskEither<ProgramError, UserDto> => {
             const { username } = decodedInputs.body;
 
             return pipe(

@@ -4,6 +4,7 @@ import { buildRetCodec, mapErrors } from "./sharedCodecs";
 import { pipe } from "fp-ts/pipeable";
 import { Either, map, mapLeft } from "fp-ts/Either";
 import { date } from "io-ts-types";
+import { ProgramError } from "../errors";
 
 export const createUserCommandCodec = buildRetCodec({
     username: t.string,
@@ -38,13 +39,13 @@ export const mapDecodedUserToUserDto = ({ id, username, createdAt, updatedAt }: 
     updatedAt: updatedAt.getTime(),
 });
 
-export const encodeUser = (user: unknown): Either<string, UserDto> => pipe(
+export const encodeUser = (user: unknown): Either<ProgramError, UserDto> => pipe(
     userCodec.decode(user),
     mapLeft(mapErrors),
     map(mapDecodedUserToUserDto),
 );
 
-export const encodeUsers = (users: unknown): Either<string, ReadonlyArray<UserDto>> => pipe(
+export const encodeUsers = (users: unknown): Either<ProgramError, ReadonlyArray<UserDto>> => pipe(
     t.readonlyArray(userCodec).decode(users),
     mapLeft(mapErrors),
     map((_users) => _users.map(mapDecodedUserToUserDto)),

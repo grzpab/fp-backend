@@ -7,7 +7,8 @@ import { buildController } from "../sideEffects/buildController";
 import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
 import { updateUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodecs";
 import { buildError } from "./buildError";
-import { TaskEither } from "fp-ts/TaskEither";
+import type { TaskEither } from "fp-ts/TaskEither";
+import type { ProgramError } from "../errors";
 
 const paramsCodec = buildRetCodec({
     id: UUID,
@@ -21,7 +22,7 @@ export const updateUserController = buildController({
     buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
-        (transaction: Transaction): TaskEither<string, UserDto> => {
+        (transaction: Transaction): TaskEither<ProgramError, UserDto> => {
             const { id } = decodedInputs.params;
             const { username } = decodedInputs.body;
 
