@@ -8,6 +8,7 @@ import { Inputs, decodeInputs } from "../effects/buildInputDecoder";
 import type { DataAccessLayer } from "./sequelize";
 import type { Decoder, Errors } from "io-ts";
 import type { ProgramError } from "../errors";
+import { buildError } from "../effects/buildError";
 
 export type ControllerInput = Readonly<{
     inputs: Inputs<unknown, unknown, unknown>,
@@ -26,7 +27,6 @@ export type ControllerRecipe<P, Q, B, A> = Readonly<{
     queryCodec: Decoder<unknown, Q>,
     bodyCodec: Decoder<unknown, B>,
     mapErrors: (errors: Errors) => ProgramError,
-    buildError: (e: unknown) => ProgramError,
     isolationLevel: Transaction.ISOLATION_LEVELS,
     callback: (dependencies: ControllerDependencies<P, Q, B>) => (t: Transaction) => TaskEither<ProgramError, A>,
 }>;
@@ -41,7 +41,6 @@ export const buildController = <P, Q, B, A>(
         queryCodec,
         bodyCodec,
         mapErrors,
-        buildError,
         isolationLevel,
         callback,
     }: ControllerRecipe<P, Q, B, A>

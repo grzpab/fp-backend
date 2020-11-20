@@ -5,7 +5,6 @@ import { Transaction } from "sequelize";
 import { pipe } from "fp-ts/lib/pipeable";
 import { chainEitherK } from "fp-ts/lib/TaskEither";
 import { encodeUsers, UserDto } from "../codecs/userCodecs";
-import { buildError } from "./buildError";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { NumberFromString } from "io-ts-types";
 import type { ProgramError } from "../errors";
@@ -20,7 +19,6 @@ export const findAllUsersController = buildController({
     queryCodec,
     bodyCodec: t.unknown,
     mapErrors,
-    buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<ProgramError, ReadonlyArray<UserDto>> => {

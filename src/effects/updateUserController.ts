@@ -6,7 +6,6 @@ import { UUID } from "io-ts-types/UUID";
 import { buildController } from "../sideEffects/buildController";
 import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
 import { updateUserCommandCodec, encodeUser, UserDto } from "../codecs/userCodecs";
-import { buildError } from "./buildError";
 import type { TaskEither } from "fp-ts/TaskEither";
 import type { ProgramError } from "../errors";
 
@@ -19,7 +18,6 @@ export const updateUserController = buildController({
     queryCodec: t.unknown,
     bodyCodec: updateUserCommandCodec,
     mapErrors,
-    buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<ProgramError, UserDto> => {

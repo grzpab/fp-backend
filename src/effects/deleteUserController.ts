@@ -3,7 +3,6 @@ import { Transaction } from "sequelize";
 import { UUID } from "io-ts-types/UUID";
 import { buildController } from "../sideEffects/buildController";
 import { buildRetCodec, mapErrors } from "../codecs/sharedCodecs";
-import { buildError } from "./buildError";
 import { TaskEither } from "fp-ts/TaskEither";
 import { ProgramError } from "../errors";
 
@@ -16,7 +15,6 @@ export const deleteUserController = buildController({
     queryCodec: t.unknown,
     bodyCodec: t.unknown,
     mapErrors,
-    buildError,
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<ProgramError, void> => {
