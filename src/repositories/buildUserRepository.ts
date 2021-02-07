@@ -1,4 +1,3 @@
-import { v4 } from "uuid";
 import { Sequelize, Model, ModelAttributes, ModelAttributeColumnOptions, DataTypes, Transaction } from "sequelize";
 import { tryCatch, TaskEither, map, chainEitherKW } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/function";
@@ -39,7 +38,6 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         id: buildUuidColumn({
             allowNull: false,
             primaryKey: true,
-            defaultValue: () => v4(),
         }),
         username: buildStringColumn(255, { allowNull: false }),
     };
@@ -78,13 +76,13 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
             map(instances => instances.map(getAttributes)),
         );
 
-    const create = (transaction: Transaction, username: string) : TaskEither<ProgramError, UserAttributes> => 
+    const create = (transaction: Transaction, id: string, username: string) : TaskEither<ProgramError, UserAttributes> =>
         pipe(
             tryCatch(
                 async () => model.create(
                     {
-                        id: v4(), // TODO pass it from somewhere
-                        username
+                        id,
+                        username,
                     },
                     { transaction },
                 ),

@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { buildDataAccessLayer } from "../../../src/sideEffects/sequelize";
 import { Sequelize, Transaction } from "sequelize";
 import { pipe } from "fp-ts/pipeable";
@@ -11,6 +12,7 @@ import { isRight } from "fp-ts/Either";
 
 describe("updateUserController", () => {
     it("updates a user", async () => {
+        const id = v4();
         const sequelize = new Sequelize("sqlite::memory:", {});
 
         const program = pipe(
@@ -18,11 +20,11 @@ describe("updateUserController", () => {
             chain(dataAccessLayer => pipe(
                 buildTransaction(
                     buildError,
-                    (t) => dataAccessLayer.userRepository.create(t, "test_username"),
+                    (t) => dataAccessLayer.userRepository.create(t, id,"test_username"),
                     Transaction.ISOLATION_LEVELS.READ_COMMITTED,
                     dataAccessLayer.sequelize,
                 ),
-                chain(({ id }) => fromTask(updateUserController({
+                chain(() => fromTask(updateUserController({
                     inputs: {
                         params: {
                             id,

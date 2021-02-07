@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import * as t from "io-ts";
 import { Transaction } from "sequelize";
 import { buildController } from "../sideEffects/buildController";
@@ -13,10 +14,11 @@ export const createUserController = buildController({
     isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     callback: ({ decodedInputs, dataAccessLayer }) =>
         (transaction: Transaction): TaskEither<ProgramError, UserDto> => {
+            const id = v4();
             const { username } = decodedInputs.body;
 
             return pipe(
-                dataAccessLayer.userRepository.create(transaction, username),
+                dataAccessLayer.userRepository.create(transaction, id, username),
                 chainEitherK(encodeUser),
             );
         },
