@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 import { Sequelize, Model, ModelAttributes, ModelAttributeColumnOptions, DataTypes, Transaction } from "sequelize";
 import { tryCatch, TaskEither, map, chainEitherKW } from "fp-ts/lib/TaskEither";
 import { pipe } from "fp-ts/function";
-import { fromNullable } from "fp-ts/lib/Option";
+import { fromNullable, map as mapOption } from "fp-ts/lib/Option";
 import { fromOption, left, right } from "fp-ts/Either";
 import { buildNotFoundError, buildProgramError, ProgramError } from "../errors";
 
@@ -22,15 +22,18 @@ export const buildStringColumn = (length: number, options: Options): ModelAttrib
     options,
 );
 
+type UserCreationAttributes = Readonly<{
+    id: string;
+    username: string;
+}>;
+
+type UserAttributes = UserCreationAttributes & Readonly<{
+    createdAt: string;
+    updatedAt: string;
+}>;
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const userRepositoryBuilder = (sequelize: Sequelize) => {
-    class User extends Model {
-        public id!: string;
-        public username!: string;
-        public readonly createdAt!: Date;
-        public readonly updatedAt!: Date;
-    }
-
     const attributes: ModelAttributes = {
         id: buildUuidColumn({
             allowNull: false,
@@ -40,16 +43,15 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
         username: buildStringColumn(255, { allowNull: false }),
     };
 
-    User.init(attributes, {
-        sequelize,
+    const model = sequelize.define<Model<UserAttributes, UserCreationAttributes>>("user", attributes, {
         tableName: "users",
         timestamps: true,
     });
 
-    const findOne = (transaction: Transaction, id: string) : TaskEither<ProgramError, User>  =>
+    const findOne = (transaction: Transaction, id: string) : TaskEither<ProgramError, UserAttributes>  =>
         pipe(
             tryCatch(
-                async () => User.findOne({
+                async () => model.findOne({
                     where: {
                         id,
                     },
@@ -58,29 +60,42 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 (reason) => buildNotFoundError(`Could not find a user: ${String(reason)}.`),
             ),
             map(fromNullable),
+            map(mapOption(instance => instance.get({ plain: true }))),
             chainEitherKW(fromOption(() => buildNotFoundError("Could not find a user"))),
         );
 
-    const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<ProgramError, ReadonlyArray<User>> => tryCatch(
-        async () => User.findAll({
-            offset,
-            limit,
-            transaction
-        }),
-        (reason) => buildNotFoundError(`Could not find users ${String(reason)}.`),
-    );
+    const findAll = (transaction: Transaction, offset: number, limit: number): TaskEither<ProgramError, ReadonlyArray<UserAttributes>> =>
+        pipe(
+            tryCatch(
+                async () => model.findAll({
+                    offset,
+                    limit,
+                    transaction
+                }),
+                (reason) => buildNotFoundError(`Could not find users ${String(reason)}.`),
+            ),
+            map(instances => instances.map(instance => instance.get({ plain: true }))),
+        );
 
-    const create = (transaction: Transaction, username: string) : TaskEither<ProgramError, User> => tryCatch(
-        async () => User.create(
-            { username },
-            { transaction },
-        ),
-        (reason) => buildProgramError(`Could not create a user: ${String(reason)}.`),
-    );
+    const create = (transaction: Transaction, username: string) : TaskEither<ProgramError, UserAttributes> => 
+        pipe(
+            tryCatch(
+                async () => model.create(
+                    {
+                        id: v4(), // TODO pass it from somewhere
+                        username
+                    },
+                    { transaction },
+                ),
+                (reason) => buildProgramError(`Could not create a user: ${String(reason)}.`),
+            ),
+            map(instance => instance.get({ plain: true })),
+        )
+        ;
 
     const update = (transaction: Transaction, id: string, username: string) : TaskEither<ProgramError, void> => tryCatch(
         async () => {
-            await User.update(
+            await model.update(
                 { username },
                 {
                     where: {
@@ -95,7 +110,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
 
     const destroy = (transaction: Transaction, id: string): TaskEither<ProgramError, void>  => pipe(
         tryCatch(
-            async () => User.destroy({
+            async () => model.destroy({
                 where: {
                     id,
                 },

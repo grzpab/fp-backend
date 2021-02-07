@@ -25,7 +25,7 @@ export const findAllUsersController = buildController({
 
             return pipe(
                 dataAccessLayer.userRepository.findAll(transaction, offset, limit),
-                chainEitherK((users) => encodeUsers(users.map(user => user.toJSON()))),
+                chainEitherK(encodeUsers),
             );
         },
 });

@@ -17,7 +17,7 @@ export const createUserController = buildController({
 
             return pipe(
                 dataAccessLayer.userRepository.create(transaction, username),
-                chainEitherK(user => encodeUser(user.toJSON())),
+                chainEitherK(encodeUser),
             );
         },
 });
