@@ -5,6 +5,7 @@ import { pipe } from "fp-ts/function";
 import { fromNullable, map as mapOption } from "fp-ts/lib/Option";
 import { fromOption, left, right } from "fp-ts/Either";
 import { buildNotFoundError, buildProgramError, ProgramError } from "../errors";
+import { getAttributes } from "./getAttributes";
 
 type Options = Pick<ModelAttributeColumnOptions, "allowNull" | "defaultValue" | "primaryKey">;
 
@@ -60,7 +61,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 (reason) => buildNotFoundError(`Could not find a user: ${String(reason)}.`),
             ),
             map(fromNullable),
-            map(mapOption(instance => instance.get({ plain: true }))),
+            map(mapOption(getAttributes)),
             chainEitherKW(fromOption(() => buildNotFoundError("Could not find a user"))),
         );
 
@@ -74,7 +75,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 }),
                 (reason) => buildNotFoundError(`Could not find users ${String(reason)}.`),
             ),
-            map(instances => instances.map(instance => instance.get({ plain: true }))),
+            map(instances => instances.map(getAttributes)),
         );
 
     const create = (transaction: Transaction, username: string) : TaskEither<ProgramError, UserAttributes> => 
@@ -89,7 +90,7 @@ export const userRepositoryBuilder = (sequelize: Sequelize) => {
                 ),
                 (reason) => buildProgramError(`Could not create a user: ${String(reason)}.`),
             ),
-            map(instance => instance.get({ plain: true })),
+            map(getAttributes),
         )
         ;
 
