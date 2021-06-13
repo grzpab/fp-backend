@@ -10,11 +10,13 @@ import type { Decoder } from "io-ts";
 import type { ProgramError } from "../errors";
 import { buildError } from "../effects/buildError";
 import { mapErrors } from "../codecs/sharedCodecs";
+import type { Loggers } from "./buildLoggers";
 
 export type ControllerInput = Readonly<{
     inputs: Inputs<unknown, unknown, unknown>,
     dataAccessLayer: DataAccessLayer,
     getTime: () => number,
+    loggers: Loggers,
 }>;
 
 export type ControllerDependencies<P, Q, B> = Readonly<{
@@ -44,7 +46,7 @@ export const buildController = <P, Q, B, A>(
         callback,
     }: ControllerRecipe<P, Q, B, A>
 ) => (
-    { inputs, dataAccessLayer, getTime }: ControllerInput,
+    { inputs, dataAccessLayer, getTime, loggers }: ControllerInput,
 ): Task<[200, A] | [404 | 500, ProgramError]> => pipe(
     decodeInputs({
         paramsCodec,
@@ -59,7 +61,7 @@ export const buildController = <P, Q, B, A>(
         callback({ decodedInputs, dataAccessLayer, getTime }),
         isolationLevel,
         dataAccessLayer.sequelize,
-    )),
+    )(loggers)),
     map(fold<ProgramError, A, [200, A] | [404 | 500, ProgramError]>(
         (e) => {
             if (e.type === "NOT_FOUND") {

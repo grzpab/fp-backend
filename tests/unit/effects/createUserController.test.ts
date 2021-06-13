@@ -6,10 +6,13 @@ import { chain, fromTask } from "fp-ts/lib/TaskEither";
 import { assert } from "chai";
 import { assert as tsAssert } from "ts-essentials/dist/functions";
 import { isRight } from "fp-ts/Either";
+import { buildLoggers } from "../../../src/sideEffects/buildLoggers";
+import { log } from "fp-ts/lib/Console";
 
 describe("createUserController", () => {
     it("creates a new user", async () => {
         const sequelize = new Sequelize("sqlite::memory:", {});
+        const loggers = buildLoggers(log);
 
         const controller = pipe(
             buildDataAccessLayer(sequelize),
@@ -23,7 +26,8 @@ describe("createUserController", () => {
                 },
                 dataAccessLayer,
                 getTime: () => Date.now(),
-            })))
+                loggers,
+            }))),
         );
 
         const either = await controller();

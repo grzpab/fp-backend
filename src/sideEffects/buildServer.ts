@@ -3,10 +3,12 @@
 import * as restify from "restify";
 import type { ControllerInput, Controller } from "./buildController";
 import type { DataAccessLayer } from "./sequelize";
+import type { Loggers } from "./buildLoggers";
 
 const buildRequestHandler = (
     dataAccessLayer: DataAccessLayer,
     controller: Controller,
+    loggers: Loggers,
 ): restify.RequestHandler => async (req, res) => {
     const input: ControllerInput = {
         inputs: {
@@ -16,10 +18,11 @@ const buildRequestHandler = (
         },
         dataAccessLayer,
         getTime: () => Date.now(),
+        loggers,
     };
 
     const [ code, data ] = await controller(input)();
-    
+
     res.send(code, data);
     res.end();
 };
@@ -32,6 +35,7 @@ type ServerRecipe = Readonly<{
     updateUserController: Controller,
     deleteUserController: Controller,
     findAllUsersController: Controller,
+    loggers: Loggers,
 }>;
 
 export const buildServer = ({
@@ -42,6 +46,7 @@ export const buildServer = ({
     updateUserController,
     deleteUserController,
     findAllUsersController,
+    loggers,
 }: ServerRecipe) : restify.Server => {
     const server = restify.createServer({ name });
 
@@ -60,11 +65,11 @@ export const buildServer = ({
         res.send(500);
     });
 
-    server.get("/", buildRequestHandler(dataAccessLayer, healthCheckController));
-    server.post("/users", buildRequestHandler(dataAccessLayer, createUserController));
-    server.put("/users/{id}", buildRequestHandler(dataAccessLayer, updateUserController));
-    server.get("/users", buildRequestHandler(dataAccessLayer, findAllUsersController));
-    server.del("/users/{id}", buildRequestHandler(dataAccessLayer, deleteUserController));
+    server.get("/", buildRequestHandler(dataAccessLayer, healthCheckController, loggers));
+    server.post("/users", buildRequestHandler(dataAccessLayer, createUserController, loggers));
+    server.put("/users/{id}", buildRequestHandler(dataAccessLayer, updateUserController, loggers));
+    server.get("/users", buildRequestHandler(dataAccessLayer, findAllUsersController, loggers));
+    server.del("/users/{id}", buildRequestHandler(dataAccessLayer, deleteUserController, loggers));
 
     return server;
 };
